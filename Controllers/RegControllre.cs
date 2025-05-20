@@ -1,0 +1,66 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using FlickLog_Pet.Contract;
+using FlickLog_Pet.Models;
+using FlickLog_Pet.DbAccets;
+namespace FlickLog_Pet.Controllers;
+
+
+[ApiController]
+[Route("[Controller]")]
+public class RegController : ControllerBase
+{
+    private readonly IPasswordHeasher passwordHeasher;
+    private readonly DbContextReg _context;
+
+    public RegController(DbContextReg context, IPasswordHeasher passwordHeasher) //Кидаем Дб контекст для работы с бд
+    {
+        _context = context;
+        this.passwordHeasher = passwordHeasher;
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> AddUser([FromBody] DbPost_Reg? request)
+    {
+        // 1. Валидация входных данных
+        if (string.IsNullOrEmpty(request.login) || string.IsNullOrEmpty(request.password))
+        {
+            return BadRequest("Логин и пароль обязательны для заполнения");
+        }
+        if (await _context.Users.AnyAsync(u => u.Login == request.login))
+        {
+            return Conflict("Пользователь с таким логином уже существует");
+        }
+
+        RegModel user = new RegModel()
+        {
+            Name = request.name,
+            Login = request.login,
+            Password = passwordHeasher.Generate(request.password) //Захерировали пароль
+        }; //Пока оставляю без проверки
+        await _context.Users.AddAsync(user); //Добавляем пользователя
+        await _context.SaveChangesAsync();
+        return Ok();
+    }
+
+    [HttpGet("Login")]
+    public async Task<IActionResult> Login([FromQuery] DbGET_Reg request)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u=> u.Login ==request.login); //В первую очередь зачекаем есть ли логин
+        if (!passwordHeasher.Verify(request.password, user.Password))
+            return BadRequest("Пользователь не найден ПОКАА");
+        else 
+            return Ok($"Вы вошли под именем {user.Name}");
+        
+        
+    }
+
+
+
+    [HttpGet("AllUser")]
+    public async Task<IActionResult> LogUser()
+    {
+        List<RegModel> last = _context.Users.ToList();
+        return Ok(last); //Проблем высветить всех
+    }
+}

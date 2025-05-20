@@ -1,0 +1,6 @@
+@FlickLog_Pet_HostAddress = http://localhost:5180
+
+GET {{FlickLog_Pet_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
