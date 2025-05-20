@@ -16,11 +16,11 @@ public class RegController : ControllerBase
     public RegController(DbContextReg context, IPasswordHeasher passwordHeasher) //Кидаем Дб контекст для работы с бд
     {
         _context = context;
-        this.passwordHeasher = passwordHeasher;
+        this.passwordHeasher = passwordHeasher; // Объект для хеширования пароля
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddUser([FromBody] DbPost_Reg? request)
+    public async Task<IActionResult> AddUser([FromBody] DbPost_Reg? request) //FromBody нужен для получения ответа из тела запроса
     {
         // 1. Валидация входных данных
         if (string.IsNullOrEmpty(request.login) || string.IsNullOrEmpty(request.password))
@@ -34,7 +34,7 @@ public class RegController : ControllerBase
 
         RegModel user = new RegModel()
         {
-            Name = request.name,
+            Name = request.name ?? "_Blank"  ,
             Login = request.login,
             Password = passwordHeasher.Generate(request.password) //Захерировали пароль
         }; //Пока оставляю без проверки
@@ -46,13 +46,25 @@ public class RegController : ControllerBase
     [HttpGet("Login")]
     public async Task<IActionResult> Login([FromQuery] DbGET_Reg request)
     {
+        if (!string.IsNullOrEmpty(request.login) && !string.IsNullOrEmpty(request.password))
+            return BadRequest("Введены не полные данные");
+
         var user = await _context.Users.FirstOrDefaultAsync(u=> u.Login ==request.login); //В первую очередь зачекаем есть ли логин
+        if (user == null || user.Name ==string.Empty)
+        {
+            Console.WriteLine("Юзер не нйаден");
+            return BadRequest("Пользователь не найден");
+        }
         if (!passwordHeasher.Verify(request.password, user.Password))
             return BadRequest("Пользователь не найден ПОКАА");
         else 
             return Ok($"Вы вошли под именем {user.Name}");
         
-        
+        //Создать токен
+
+        //Сохранить в куках
+
+
     }
 
 
