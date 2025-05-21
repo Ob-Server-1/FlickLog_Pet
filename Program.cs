@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddScoped<DbContextReg>();
-builder.Services.AddScoped<IPasswordHeasher,PasswordHeasher>();
+builder.Services.AddScoped<IPasswordHeasher,PasswordHeasher>(); //Разобратся как работает DI
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
