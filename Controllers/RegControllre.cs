@@ -10,13 +10,17 @@ namespace FlickLog_Pet.Controllers;
 [Route("[Controller]")]
 public class RegController : ControllerBase
 {
-    private readonly IPasswordHeasher passwordHeasher;
-    private readonly DbContextReg _context;
+    private readonly IPasswordHeasher passwordHeasher; //ХешерПароля
+    private readonly DbContextReg _context; //Контекст БД
+    private readonly JWT_TokenProvider jwtProvader; // для работы с токеном
 
-    public RegController(DbContextReg context, IPasswordHeasher passwordHeasher) //Кидаем Дб контекст для работы с бд
+    public RegController(DbContextReg context, 
+        IPasswordHeasher passwordHeasher, 
+        JWT_TokenProvider jwtProvader) 
     {
         _context = context;
         this.passwordHeasher = passwordHeasher; // Объект для хеширования пароля
+        this.jwtProvader = jwtProvader;
     }
 
     [HttpPost]
@@ -46,7 +50,7 @@ public class RegController : ControllerBase
     [HttpGet("Login")]
     public async Task<IActionResult> Login([FromQuery] DbGET_Reg request)
     {
-        if (!string.IsNullOrEmpty(request.login) && !string.IsNullOrEmpty(request.password))
+        if (string.IsNullOrEmpty(request.login) && string.IsNullOrEmpty(request.password))
             return BadRequest("Введены не полные данные");
 
         var user = await _context.Users.FirstOrDefaultAsync(u=> u.Login ==request.login); //В первую очередь зачекаем есть ли логин
@@ -57,14 +61,13 @@ public class RegController : ControllerBase
         }
         if (!passwordHeasher.Verify(request.password, user.Password))
             return BadRequest("Пользователь не найден ПОКАА");
-        else 
-            return Ok($"Вы вошли под именем {user.Name}");
-        
-        //Создать токен
-
-        //Сохранить в куках
-
-
+        else
+        {
+            var token = jwtProvader.GenerateToken(user);
+            //Сохранить в куках
+            Console.WriteLine($"Был авторизован {user.Name}");
+            return Ok(token);
+        }
     }
 
 
