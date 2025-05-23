@@ -13,14 +13,16 @@ public class RegController : ControllerBase
     private readonly IPasswordHeasher passwordHeasher; //ХешерПароля
     private readonly DbContextReg _context; //Контекст БД
     private readonly JWT_TokenProvider jwtProvader; // для работы с токеном
-
+    public HttpContext httpContext;
     public RegController(DbContextReg context, 
         IPasswordHeasher passwordHeasher, 
-        JWT_TokenProvider jwtProvader) 
+        JWT_TokenProvider jwtProvader,
+        HttpContext htppContext) 
     {
         _context = context;
         this.passwordHeasher = passwordHeasher; // Объект для хеширования пароля
         this.jwtProvader = jwtProvader;
+        this.httpContext = htppContext; //29 26
     }
 
     [HttpPost]

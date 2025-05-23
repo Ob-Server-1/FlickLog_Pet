@@ -12,15 +12,15 @@ namespace FlickLog_Pet.Controllers;
 
 
 [ApiController]
-[Route("[Controller]/API")]
+[Route("[Controller]")]
 public class NotesController : ControllerBase
 {
 
     [Authorize]
-    [HttpGet("GetData")]
+    [HttpGet("Status")]
     public async Task<IActionResult> Get()
     {
 
-        return Ok("Вы авторизованы");
+        return Ok($"Статус-Вы авторизованые под именем {User.Identity.Name}");
     }
 }
