@@ -1,5 +1,6 @@
 using FlickLog_Pet.Controllers;
 using FlickLog_Pet.DbAccets;
+using Microsoft.AspNetCore.CookiePolicy;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddApiAuthentication(builder.Configuration);
 
 var app = builder.Build();
 
@@ -25,6 +27,15 @@ if (app.Environment.IsDevelopment()) //Swager Doka
 app.UseHttpsRedirection(); 
 
 app.MapControllers();
+
+app.UseCookiePolicy(new CookiePolicyOptions
+{
+    MinimumSameSitePolicy = SameSiteMode.Strict,
+    HttpOnly = HttpOnlyPolicy.Always,
+    Secure = CookieSecurePolicy.Always
+});
+
+
 app.UseAuthentication(); 
 app.UseAuthorization();
 app.Run();

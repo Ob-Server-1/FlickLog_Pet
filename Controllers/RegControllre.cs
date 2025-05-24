@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using FlickLog_Pet.Contract;
 using FlickLog_Pet.Models;
 using FlickLog_Pet.DbAccets;
+using Microsoft.AspNetCore.Http;
 namespace FlickLog_Pet.Controllers;
 
 
@@ -13,16 +14,18 @@ public class RegController : ControllerBase
     private readonly IPasswordHeasher passwordHeasher; //ХешерПароля
     private readonly DbContextReg _context; //Контекст БД
     private readonly JWT_TokenProvider jwtProvader; // для работы с токеном
-    public HttpContext httpContext;
+
+
+
     public RegController(DbContextReg context, 
         IPasswordHeasher passwordHeasher, 
-        JWT_TokenProvider jwtProvader,
-        HttpContext htppContext) 
+        JWT_TokenProvider jwtProvader
+       ) 
     {
         _context = context;
         this.passwordHeasher = passwordHeasher; // Объект для хеширования пароля
         this.jwtProvader = jwtProvader;
-        this.httpContext = htppContext; //29 26
+      
     }
 
     [HttpPost]
@@ -65,9 +68,11 @@ public class RegController : ControllerBase
             return BadRequest("Пользователь не найден ПОКАА");
         else
         {
-            var token = jwtProvader.GenerateToken(user);
+            var token =  jwtProvader.GenerateToken(user);
             //Сохранить в куках
+            HttpContext.Response.Cookies.Append("JwtToken",token);
             Console.WriteLine($"Был авторизован {user.Name}");
+            
             return Ok(token);
         }
     }
