@@ -6,9 +6,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
 
+builder.Services.AddScoped<DbContextData>();
 builder.Services.AddScoped<DbContextReg>();
+
 builder.Services.AddScoped<IPasswordHeasher,PasswordHeasher>(); //Разобратся как работает DI
 builder.Services.AddScoped<JWT_TokenProvider>();
+
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -33,7 +36,8 @@ app.UseCookiePolicy(new CookiePolicyOptions
     MinimumSameSitePolicy = SameSiteMode.Strict,
     HttpOnly = HttpOnlyPolicy.Always,
     Secure = CookieSecurePolicy.Always
-});
+}); //Поликтки куки для безопасности
+
 
 
 app.UseAuthentication(); 

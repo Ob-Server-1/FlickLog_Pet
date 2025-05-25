@@ -19,7 +19,9 @@ public class JWT_TokenProvider // Класс для создания jwt ток�
     }
     public string GenerateToken(RegModel user)
     {
-        Claim[] claims =  [new("Id", user.Id.ToString()), new("Name", user.Name.ToString())]; //Клеймы, то что мы кладем в
+        Claim[] claims =  
+            [new("Id", user.Id.ToString()), 
+            new("Name", user.Name.ToString())]; //Клеймы, то что мы кладем в
                                                               //токен для использования атвориации в будущем
 
         var signingCredentials = new SigningCredentials(//Ключ для шифрования/расшифрования Jwt токена //или иначе схема аутентификации       

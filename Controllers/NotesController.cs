@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using FlickLog_Pet.Contract;
 using FlickLog_Pet.Models;
 using FlickLog_Pet.DbAccets;
+using System.Security.Claims;
 
 
 namespace FlickLog_Pet.Controllers;
@@ -20,7 +21,14 @@ public class NotesController : ControllerBase
     [HttpGet("Status")]
     public async Task<IActionResult> Get()
     {
+        var beta = User.Claims;
+        List<string> str = new List<string>(20);
 
-        return Ok($"Статус-Вы авторизованые под именем {User.Identity.Name}");
+        foreach (var alfa in beta)
+        { 
+                str.Add(alfa.ToString());
+        }
+    
+        return Ok($"Статус-Вы авторизованые под именем {str[1]}");
     }
 }
