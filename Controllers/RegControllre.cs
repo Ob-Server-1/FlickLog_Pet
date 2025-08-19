@@ -15,8 +15,6 @@ public class RegController : ControllerBase
     private readonly DbContextReg _context; //Контекст БД
     private readonly JWT_TokenProvider jwtProvader; // для работы с токеном
 
-
-
     public RegController(DbContextReg context, 
         IPasswordHeasher passwordHeasher, 
         JWT_TokenProvider jwtProvader
@@ -43,17 +41,17 @@ public class RegController : ControllerBase
 
         RegModel user = new RegModel()
         {
-            Name = request.name ?? "_Blank"  ,
+            Name = request.username ?? "_Blank"  ,
             Login = request.login,
             Password = passwordHeasher.Generate(request.password) //Захерировали пароль
         }; //Пока оставляю без проверки
         await _context.Users.AddAsync(user); //Добавляем пользователя
         await _context.SaveChangesAsync();
-        return Ok();
+        return Ok($"Регистрация успешна, рад встречи {user.Name}");
     }
 
-    [HttpGet("Login")]
-    public async Task<IActionResult> Login([FromQuery] DbGET_Reg request)
+    [HttpPost("Login")]
+    public async Task<IActionResult> Login([FromBody] DbGET_Reg request)
     {
         if (string.IsNullOrEmpty(request.login) && string.IsNullOrEmpty(request.password))
             return BadRequest("Введены не полные данные");
@@ -68,11 +66,16 @@ public class RegController : ControllerBase
             return BadRequest("Пользователь не найден ПОКАА");
         else
         {
-            var token =  jwtProvader.GenerateToken(user);
-            //Сохранить в куках
-            HttpContext.Response.Cookies.Append("JwtToken",token);
-            Console.WriteLine($"Был авторизован {user.Name}");
-            
+           var token = jwtProvader.GenerateToken(user);
+
+        // Основной способ установки куки
+         HttpContext.Response.Cookies.Append("Token", token, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTime.UtcNow.AddDays(1)
+        });
             return Ok(token);
         }
     }

@@ -1,0 +1,47 @@
+* {
+    box-sizing: border-box;
+}
+
+.LeftMenu
+{
+    display: inline-block;
+    margin-left: 20px; /*Лучше исопользовать абсолютнрое значение а не относительное*/
+    border: 4px solid rgb(0, 0, 0);
+    border-radius: 1.5em;
+    width: 280px;
+   
+    height: 90%;
+    background: #007bff;
+    text-align: center;
+}
+
+.LeftMenu button
+{
+     border-radius: 1.2em;
+     padding: 10px 5px; /*Лево-Право Вверх-вниз*/
+     font-size: 20px;
+     font-weight: 600;
+     color: rgb(0, 0, 0);
+     background-color: white;
+     border: 3px solid black;
+     margin-bottom: 12px;
+}
+
+.LeftMenu button:hover
+{
+    background-color: black;
+    color: white;
+}
+
+.LeftMenu-title { /*Надпись в левом меню*/
+    display: block;
+    background: #007bff;
+    color: white;
+    font-size: 2rem;
+    font-weight: 600;
+    width: 100%;
+    margin: 25px 0px;
+    border-top-right-radius: 1.3em;
+    border-top-left-radius: 1.3em;
+    text-align: center;
+}

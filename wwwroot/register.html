@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Главная страница</title>
+    <link rel="stylesheet" href="CSS/BackgroundStyle.css" />
+    <!--Стиль фона-->
+    <link rel="stylesheet" href="CSS/TopMenuStyle.css" />
+    <link rel="stylesheet" href="CSS/regForm.css" />
+  </head>
+  <body>
+    <div class="TopMenu">
+      <nav class="ButtonMenu">
+        <a href="index.html">Главная</a>
+        <a href="register.html">Регистрация</a>
+        <a href="vhod.html">Войти</a>
+      </nav>
+    </div>
+
+    <div class="regConteiner">
+      <div class="regForm">
+        <form id="registerForm">
+          <legend>Регистрация</legend>
+          <label>
+            <input
+              type="text"
+              id="username"
+              placeholder="Введите имя"
+              required
+            />
+          </label>
+          <label>
+            <input
+              type="text"
+              id="login"
+              placeholder="Введите логин"
+              required
+            />
+          </label>
+          <label>
+            <input
+              type="password"
+              id="password"
+              placeholder="Введите пароль"
+              required
+            />
+          </label>
+          <button type="submit">Зарегистрироваться</button>
+        </form>
+      </div>
+    </div>
+    <script>
+      document
+        .getElementById("registerForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          const formData = {
+            username: document.getElementById("username").value,
+            login: document.getElementById("login").value,
+            password: document.getElementById("password").value,
+          };
+
+          try {
+            const response = await fetch("/Reg", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(formData),
+            });
+          } catch (error) {
+            console.log(error);
+          }
+        });
+    </script>
+  </body>
+</html>

@@ -14,32 +14,28 @@ builder.Services.AddScoped<JWT_TokenProvider>();
 
 builder.Services.AddControllers();
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
 builder.Services.AddApiAuthentication(builder.Configuration);
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment()) //Swager Doka
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseCors();
 
-app.UseHttpsRedirection(); 
+
 
 app.MapControllers();
 
 app.UseCookiePolicy(new CookiePolicyOptions
 {
-    MinimumSameSitePolicy = SameSiteMode.Strict,
+    MinimumSameSitePolicy = SameSiteMode.None,
     HttpOnly = HttpOnlyPolicy.Always,
     Secure = CookieSecurePolicy.Always
 }); //Поликтки куки для безопасности
 
+app.UseStaticFiles();
+app.UseRouting();
 
-
+app.MapFallbackToFile("index.html"); // Перехватывает все маршруты и возвращает index.html
+app.UseHttpsRedirection();
 app.UseAuthentication(); 
 app.UseAuthorization();
 app.Run();

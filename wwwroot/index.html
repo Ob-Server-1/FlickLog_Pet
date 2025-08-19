@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Главная страница</title>
+    <link rel="stylesheet" href="CSS/BackgroundStyle.css" />
+    <!--Стиль фона-->
+    <link rel="stylesheet" href="CSS/TopMenuStyle.css" />
+    <link rel="stylesheet" href="CSS/LeftMenuStyle.css" />
+    <link rel="stylesheet" href="CSS/CardStyle.css" />
+  </head>
+  <body>
+    <div class="TopMenu">
+      <nav class="ButtonMenu">
+        <a href="index.html">Главная</a>
+        <a href="register.html">Регистрация</a>
+        <a href="vhod.html">Войти</a>
+      </nav>
+    </div>
+    <div class="layout">
+      <div class="LeftMenu">
+        <h2 class="LeftMenu-title">Сортировка</h2>
+        <button href="index.html">Показать все</button>
+        <button href="index.html">По дате выхода серии</button>
+        <h2 class="LeftMenu-title">Статус</h2>
+        <button href="index.html">По дате выхода серии</button>
+        <button href="index.html">Нажми на меня</button>
+        <button href="index.html">По дате выхода серии</button>
+        <button href="index.html">Нажми на меня</button>
+      </div>
+
+      <!--Полная логика карточек начинается здесь
+1) Карточка с плюсом всегда первая
+2) после неё идут следющие карточки
+3) Карточки и их сортировка всегда идут от бекенда и
+не сохраняются в куках-->
+
+      <div class="cards-container">
+        <div class="card card-add" id="addCard">
+          <span class="card-add-icon">+</span>
+        </div>
+      </div>
+    </div>
+
+    <script src="ScripsJs//CardScript.js"></script>
+  </body>
+  
+</html>

@@ -10,8 +10,6 @@ using System.Security.Claims;
 
 namespace FlickLog_Pet.Controllers;
 
-
-
 [ApiController]
 [Route("[Controller]")]
 public class NotesController : ControllerBase

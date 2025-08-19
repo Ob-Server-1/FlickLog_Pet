@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Главная страница</title>
+    <link rel="stylesheet" href="CSS/BackgroundStyle.css" />
+    <!--Стиль фона-->
+    <link rel="stylesheet" href="CSS/TopMenuStyle.css" />
+    <link rel="stylesheet" href="CSS/regForm.css" />
+  </head>
+  <body>
+    <div class="TopMenu">
+      <nav class="ButtonMenu">
+        <a href="index.html">Главная</a>
+        <a href="register.html">Регистрация</a>
+        <a href="vhod.html">Войти</a>
+      </nav>
+    </div>
+
+    <div class="regConteiner">
+      <div class="regForm">
+        <form id="loginForm">
+          <legend>Войти</legend>
+          <label>
+            <input
+              type="text"
+              id="loginBeta"
+              placeholder="Введите логин"
+              required
+            />
+          </label>
+          <label>
+            <input
+              type="password"
+              id="passwordBeta"
+              placeholder="Введите пароль"
+              required
+            />
+          </label>
+          <button type="submit">Войти</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          const formDataLogin = {
+            login: document.getElementById("loginBeta").value,
+            password: document.getElementById("passwordBeta").value,
+          };
+
+          try {
+            const response = await fetch("/Reg/Login", {
+              method: "POST",
+              credentials: "include", // Для кук обязательно
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(formDataLogin),
+            });
+            if (!response.ok) {
+              const response_2 = await response.json();
+              console.log(response_2);
+            }
+          } catch (error) {
+            console.log("Произошла ошибка:" + error);
+          }
+        });
+    </script>
+  </body>
+</html>

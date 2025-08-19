@@ -1,3 +1,3 @@
 ﻿namespace FlickLog_Pet.Contract;
 
-public record class DbPost_Reg(string? name, string? login, string? password);
+public record class DbPost_Reg(string? username, string? login, string? password);

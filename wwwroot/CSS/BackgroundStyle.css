@@ -1,0 +1,41 @@
+body
+{
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e2d9c3 100%);
+    font-family: 'Segoe UI', sans-serif;
+    position: relative;
+    overflow: hidden;
+}
+
+
+body::before
+{
+    content: "";
+    position: absolute;
+    bottom: -60px;
+    right: -100px;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    border: 20px solid rgba(247, 189, 148,0.4);
+    z-index: -1;
+  
+}
+body::after
+{
+    content: "" ;
+    position: absolute;
+    bottom: 140px;
+    right: 80px;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    border: 20px solid rgba(247, 189, 148,0.4);
+    z-index: -1;
+ 
+}
+
+
+
+

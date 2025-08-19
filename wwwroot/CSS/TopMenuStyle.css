@@ -1,0 +1,55 @@
+* {
+    box-sizing: border-box;
+}
+
+.TopMenu {
+    /* Убираем фиксированную height */
+    display: flex;
+    min-height: 60px;           /* Минимальная высота — безопасно при масштабе */
+    border-radius: 1.5em;
+    border: 4px solid rgb(70, 50, 3);
+    margin: 1.5% 1%;             /* Сокращённая запись: top/bottom и left/right */
+    background-color: rgb(241, 211, 102);
+    
+    overflow: hidden;            /* На всякий случай — если что-то вылезет */
+    padding: 0px 20px;
+}
+
+.ButtonMenu {
+    display: flex;
+     /* Центрируем пункты меню по вертикали */
+   
+    gap: 30px;
+    align-items: center;  
+    width: 100%;
+    margin-right: 40px;
+}
+
+.ButtonMenu a {
+
+    font-size: 1rem;             /* 16px по умолчанию, масштабируется умеренно */
+    /* font-size: 16px; */       /* Альтернатива — фиксированный размер */
+    padding: 5px 25px;           /* ✅ Пробел, а не запятая */
+    background-color: rgb(255, 239, 185);
+    color: rgba(0, 0, 0, 0.93);
+    text-decoration: none;
+    font-weight: 650;
+    border-radius: 1.5em;
+    transition: all 0.3s ease;
+}
+
+.ButtonMenu a:nth-child(2)
+{
+    margin-left: auto;
+    
+}
+
+ .ButtonMenu .RightMenu a
+{
+    margin-left: auto;
+}
+
+.ButtonMenu a:hover {
+    background: #ffffff;
+    transform: translateX(-1px);
+}
