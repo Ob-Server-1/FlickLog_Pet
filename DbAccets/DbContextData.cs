@@ -5,7 +5,7 @@ namespace FlickLog_Pet.DbAccets;
 
 public class DbContextData :DbContext //Для доавбление изменения или удаления карточек
 {
-    DbSet<DataModel> dataModel => Set<DataModel>();
+     public DbSet<DataModel1> DataModel => Set<DataModel1>();
 
     public DbContextData()
     {
