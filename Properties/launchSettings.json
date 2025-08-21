@@ -11,9 +11,11 @@
   "profiles": {
     "Kestrel (HTTPS)": {
       "commandName": "Project",
-      "dotnetRunMessages": true,
+        "dotnetRunMessages": true,
+
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:7047;http://localhost:5180",
+        "applicationUrl": "https://localhost:7047;http://localhost:5180",
+      "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
