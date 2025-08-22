@@ -5,10 +5,12 @@ using FlickLog_Pet.DbAccets;
 using FlickLog_Pet.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
 namespace FlickLog_Pet.Controllers;
 
 
-
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class DataController : ControllerBase //ДАнный контроллербудет отвечать за добавление данных в карточки
@@ -18,37 +20,65 @@ public class DataController : ControllerBase //ДАнный контроллер
     {
         _context = context;
     }
+    
     [HttpPost("Add")]
     public async Task<IActionResult> AddData([FromBody] Data_Add request)
     {
-        string? requestCookies =  Request.Cookies["Token"]; // Отлавливаем куки с ответом
-        if (string.IsNullOrEmpty(requestCookies)) 
+        string? requestCookies = Request.Cookies["Token"]; // Отлавливаем куки с ответом
+        if (string.IsNullOrEmpty(requestCookies))
         {
             return Unauthorized("Вы не авторизованы");
         }
-        var handler = new JwtSecurityTokenHandler();
-        var jwtToken = handler.ReadJwtToken(requestCookies);
-        var userId = jwtToken.Claims.First(c => c.Type == "Id").Value;
-        var userName = jwtToken.Claims.First(c=>c.Type=="Name").Value;
-
-        DataModel1 dataModel = new DataModel1
+        try
         {
-            NameFilm = request.NameFilm,
-            Link = request.Link,
-            DateTime = DateTime.Now.ToString(),
-            SerNumber = request.SerNumber,
-            Statuc = request.Statuc,
-            UserId = userId
-        };
-        await _context.DataModel.AddAsync(dataModel);
-        await _context.SaveChangesAsync();
-        return Ok($"Ваши данные успешно получены");
+            var handler = new JwtSecurityTokenHandler();
+
+            var userId = User.FindFirst("Id")?.Value;
+            var userName = User.FindFirst("Name")?.Value;
+
+            DataModel1 dataModel = new DataModel1
+            {
+                NameFilm = request.NameFilm,
+                Link = request.Link,
+                DateTime = DateTime.Now.ToString(),
+                SerNumber = request.SerNumber,
+                Statuc = request.Statuc,
+                UserId = userId
+            };
+            await _context.DataModel.AddAsync(dataModel);
+            await _context.SaveChangesAsync();
+            return Ok($"Ваши данные успешно получены");
+        }
+        catch (ArgumentException ex)
+        {
+            Console.WriteLine($"Некорректный токен {ex.Message}");
+            return BadRequest("Некорректный токен");
+        }
+        catch (InvalidOperationException ex) when (ex.Message.Contains("Sequence contains no matching element"))
+        {
+            return Unauthorized("Токен не содержит необходимых данных");
+        }
+        catch (Exception exp)
+        {
+            return StatusCode(500, "Призошла ошибка на сервере, оперативно доставил в штаб");
+        }
     }
+   
     [HttpGet("Stat")]
     public async Task<IActionResult> Stat()
     {
-        List<DataModel1> last = _context.DataModel.ToList();
-        return Ok(last); //Проблем высветить всех
+     
+        var userId = User.FindFirst("Id")?.Value;
+        var userName = User.FindFirst("Name")?.Value;
+        var data = await _context.DataModel
+            .Where(x => x.UserId == userId)
+            .ToListAsync();
+   
+        if (data == null)
+        {
+            return NotFound($"Вы не использовали карты, ПОШЕЛ ВОН!");
+        }
+        return Ok(data);
     }
 }
 

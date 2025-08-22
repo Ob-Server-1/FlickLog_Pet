@@ -11,10 +11,9 @@ using System.Security.Claims;
 namespace FlickLog_Pet.Controllers;
 
 [ApiController]
-[Route("[Controller]")]
+[Route("[controller]")]
 public class NotesController : ControllerBase
 {
-
     [Authorize]
     [HttpGet("Status")]
     public async Task<IActionResult> Get()
@@ -26,7 +25,7 @@ public class NotesController : ControllerBase
         { 
                 str.Add(alfa.ToString());
         }
-    
+        Console.WriteLine("Использовался контроллер статуса");
         return Ok($"Статус-Вы авторизованые под именем {str[1]}");
     }
 }

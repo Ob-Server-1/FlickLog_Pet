@@ -30,6 +30,8 @@ public class JWT_TokenProvider // Класс для создания jwt ток�
             );
 
         var token = new JwtSecurityToken(
+            issuer: jwtOptions.Issuer,           // ← "FlickLog_Auth_Server"
+            audience: jwtOptions.Audience,
             signingCredentials: signingCredentials, //Схема шифровки 
             expires: DateTime.UtcNow.AddHours(jwtOptions.ExpiresHours), //Часы хранения токена
             claims: claims // Клаймы которые мы кладем внутрь
@@ -44,8 +46,10 @@ public class JWT_TokenProvider // Класс для создания jwt ток�
 
 public class JwtOptions //класс для связи с апсетингами, использууется как DI
 {
-    public string SecretKey { get; set; }
+    public string? SecretKey { get; set; }
     public int ExpiresHours { get; set; }
+    public string? Issuer { get; set; }
+    public string? Audience { get; set; }
 }
 
 
@@ -59,13 +63,16 @@ public static class Api_DOP
         IConfiguration config)
     {
         var jwtOptions = config.GetSection(nameof(JwtOptions)).Get<JwtOptions>();
+
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
         {
             options.TokenValidationParameters = new()
             {
-                ValidateIssuer = false,
-                ValidateAudience = false,
+                ValidateIssuer = true,
+                ValidIssuer = jwtOptions!.Issuer,
+                ValidateAudience = true,
+                ValidAudience = jwtOptions.Audience,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions!.SecretKey))
@@ -75,7 +82,7 @@ public static class Api_DOP
             {
              OnMessageReceived =context =>
              {
-                 context.Token = context.Request.Cookies["JwtToken"];
+                 context.Token = context.Request.Cookies["Token"];
                  return Task.CompletedTask;
              }
             };
