@@ -20,7 +20,7 @@ public class DataController : ControllerBase //ДАнный контроллер
     {
         _context = context;
     }
-    
+
     [HttpPost("Add")]
     public async Task<IActionResult> AddData([FromBody] Data_Add request)
     {
@@ -63,22 +63,64 @@ public class DataController : ControllerBase //ДАнный контроллер
             return StatusCode(500, "Призошла ошибка на сервере, оперативно доставил в штаб");
         }
     }
-   
-    [HttpGet("Stat")]
+
+    [HttpGet("GetCard")]
     public async Task<IActionResult> Stat()
     {
-     
         var userId = User.FindFirst("Id")?.Value;
         var userName = User.FindFirst("Name")?.Value;
         var data = await _context.DataModel
             .Where(x => x.UserId == userId)
             .ToListAsync();
-   
+
         if (data == null)
         {
             return NotFound($"Вы не использовали карты, ПОШЕЛ ВОН!");
         }
-        return Ok(data);
+
+        return Ok(new
+        {
+            Creator = userName,
+            Count = data.Count,
+            Data = data
+        });
+    }
+    [HttpPut("ChangeCard/{idCard}")]
+    public async Task<IActionResult> ChangeCard(int? idCard, [FromBody] Data_Change request)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState); //
+
+        var userId = User.FindFirst("Id")?.Value;
+
+        var CheackIf =  await _context.DataModel
+            .FirstOrDefaultAsync(x=>x.Id==idCard && x.UserId== userId);
+
+        if (CheackIf == null) 
+        {
+            return BadRequest("Ошибка, карточка не была изменена");
+        }
+        CheackIf.NameFilm = request.NameFilm;
+        CheackIf.Link = request.Link;
+        CheackIf.SerNumber = request.SerNumber;
+        CheackIf.DateTime = request.DateTime;
+        CheackIf.Statuc = request.Statuc;
+
+        await _context.SaveChangesAsync();
+        return NoContent();
+    }
+    [HttpDelete("DeleteCard/{idCard}")]
+    public async Task<IActionResult> DeleteCard(int idCard)
+    {
+        var userId = User.FindFirst("Id")?.Value;
+        var CheackIf = await _context.DataModel
+            .FirstOrDefaultAsync(x => x.Id == idCard && x.UserId == userId);
+        if (CheackIf == null)
+            return BadRequest("Операция не была выполнена");
+
+        _context.DataModel.Remove(CheackIf);
+        await _context.SaveChangesAsync();
+        return Ok();
     }
 }
 
