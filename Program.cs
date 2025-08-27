@@ -9,6 +9,9 @@ builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(J
 builder.Services.AddScoped<DbContextData>();
 builder.Services.AddScoped<DbContextReg>();
 
+builder.Logging.AddConsole();
+builder.Logging.SetMinimumLevel(LogLevel.Information); // или Debug
+
 builder.Services.AddScoped<IPasswordHeasher,PasswordHeasher>(); //Разобратся как работает DI
 builder.Services.AddScoped<JWT_TokenProvider>();
 

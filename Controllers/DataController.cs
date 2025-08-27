@@ -7,6 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authorization;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 namespace FlickLog_Pet.Controllers;
 
 
@@ -65,24 +66,41 @@ public class DataController : ControllerBase //ДАнный контроллер
     }
 
     [HttpGet("GetCard")]
-    public async Task<IActionResult> Stat()
+    public async Task<IActionResult> Stat([FromQuery] SortAndSearch request)
     {
+        List<DataModel1> result;
         var userId = User.FindFirst("Id")?.Value;
         var userName = User.FindFirst("Name")?.Value;
-        var data = await _context.DataModel
-            .Where(x => x.UserId == userId)
-            .ToListAsync();
+        var data = _context.DataModel
+            .Where(x => x.UserId == userId &&
+                (string.IsNullOrEmpty(request.search) ||
+                 EF.Functions.Like(
+                     EF.Functions.Collate(x.NameFilm, "NOCASE"),
+                     $"%{Strok.ToTitleCase(request.search)}%")));
 
-        if (data == null)
+        if (!string.IsNullOrEmpty(request.sortStatuc))
         {
-            return NotFound($"Вы не использовали карты, ПОШЕЛ ВОН!");
+            data = data.Where(x => x.Statuc ==request.sortStatuc);
         }
+
+
+        if (request.sortData == "desc")
+        {
+            var query = data.OrderByDescending(x => x.DateTime);
+            result = await query.ToListAsync();
+        }
+        else
+        {
+            result = await data.ToListAsync();
+        }
+
+
 
         return Ok(new
         {
             Creator = userName,
-            Count = data.Count,
-            Data = data
+            Count = result.Count,
+            Data = result
         });
     }
     [HttpPut("ChangeCard/{idCard}")]
@@ -124,4 +142,16 @@ public class DataController : ControllerBase //ДАнный контроллер
     }
 }
 
+public static class Strok
+{
+    public static string ToTitleCase(string input)
+{
+    if (string.IsNullOrEmpty(input))
+        return input;
 
+    if (input.Length == 1)
+        return input.ToUpper();
+
+    return char.ToUpper(input[0]) + input.Substring(1).ToLower();
+}
+}
