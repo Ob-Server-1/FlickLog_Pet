@@ -9,6 +9,9 @@ builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(J
 builder.Services.AddScoped<DbContextData>();
 builder.Services.AddScoped<DbContextReg>();
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 builder.Logging.AddConsole();
 builder.Logging.SetMinimumLevel(LogLevel.Information); // или Debug
 
@@ -28,6 +31,13 @@ app.UseCookiePolicy(new CookiePolicyOptions
     HttpOnly = HttpOnlyPolicy.Always,
     Secure = CookieSecurePolicy.Always
 }); //Поликтки куки для безопасности
+
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.UseStaticFiles();
 app.UseRouting();

@@ -19,15 +19,28 @@
           </nav>
       </div>
       <div class="layout">
-          <div class="LeftMenu">
+          <div id="LeftMenu" class="LeftMenu">
+              <h2 class="LeftMenu-title">Меню сортировки</h2>
+              <button id="GetAll">Показать все</button>
+
+
+
+              <h2 class="LeftMenu-title">Поиск</h2>
+              <input type="text" id="searchText" name="text" class="search" placeholder="Поиск по названию">
+              <button id="search">Поиск</button>
+
               <h2 class="LeftMenu-title">Сортировка</h2>
-              <button href="index.html">Показать все</button>
-              <button href="index.html">По дате выхода серии</button>
+
+              <button id="FilterDate" type="button">По дате выхода серии</button>
+
               <h2 class="LeftMenu-title">Статус</h2>
-              <button href="index.html">По дате выхода серии</button>
-              <button href="index.html">Нажми на меня</button>
-              <button href="index.html">По дате выхода серии</button>
-              <button href="index.html">Нажми на меня</button>
+              <div class="statuc-buttons">
+
+              <button id="statucButton" data-fulter="Pr">Просмотренно</button>
+              <button id="statucButton" data-fulter="Sm">Смотрю</button>
+              <button id="statucButton" data-fulter="Zb">Заброшено</button>
+
+              </div>
           </div>
 
           <!--Полная логика карточек начинается здесь
@@ -46,29 +59,53 @@
       <!--Анимация и появление карточек-->
       <script src="ScripsJs//CardScript.js"></script>
 
-      <!--Логика карточек но через бекенд-->
+      <!--Логика появление после перезагрузки страницы-->
+      <script src="ScripsJs/StandsrtPage.js"></script>
+
+        <!--Логика при добавление строки поиска-->
       <script>
-          (async () => {
+
+          document.getElementById("FilterDate").addEventListener("click", function () {
+              const isActive = this.classList.toggle("active");
+              this.dataset.active = isActive;
+          });
+
+          // ✅ Обработчик клика по кнопке "Поиск"
+          document.getElementById("search").addEventListener("click", async () => {
+              const search = document.getElementById("searchText").value;
+
+
+              const params = new URLSearchParams();
+              if (search) {
+                  params.append("search", search);
+              }
+
+
+              const filterBtn = document.getElementById("FilterDate");
+              if (filterBtn?.dataset.active === "true") {
+                  params.append("sortData", "desc");
+              }
+
+
+              const url = `/api/data/GetCard?${params}`;
+
               try {
-                  const response = await fetch("/api/data/GetCard");
+                  const response = await fetch(url);
 
                   if (!response.ok) {
-                      // ✅ Сначала получаем ошибку из тела
-                      const errorData = await response.json().catch(() => ({}));
-                      throw new Error(
-                          `Ошибка: ${response.status} ${response.statusText}. ${JSON.stringify(errorData)}`
-                      );
+                      throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
                   }
 
-                  // ✅ Только если всё ок — читаем нормальный ответ
                   const result = await response.json();
-                  console.log("Данные:", result);
-
                   const container = document.getElementById("cards-container");
+
                   if (!container) {
                       console.warn("Контейнер с id 'cards-container' не найден");
                       return;
                   }
+
+                  // ✅ Очищаем контейнер перед добавлением новых карточек
+                  container.innerHTML = ''; // ✅ ВАЖНО: иначе карточки будут дублироваться
 
                   const arrCards = result.data;
 
@@ -84,7 +121,7 @@
                           <strong>${item.nameFilm}</strong>
                           <p>${item.link}</p>
                           <p>Серия: ${item.serNumber}</p>
-                          <p>Дата: ${item.dateTime}</p>
+                          <p>Дата следующей серии: ${item.dateTime}</p>
                           <p>Статус: ${item.statuc}</p>
                       `;
                       container.appendChild(card);
@@ -92,10 +129,9 @@
               }
               catch (error) {
                   console.error("Ошибка при запросе:", error);
-                  // Можно показать alert или сообщение на странице
                   alert("Не удалось загрузить данные: " + error.message);
               }
-          })();
+          });
       </script>
   </body>
 </html>

@@ -8,7 +8,7 @@
     margin-left: 20px; /*Лучше исопользовать абсолютнрое значение а не относительное*/
     border: 4px solid rgb(0, 0, 0);
     border-radius: 1.5em;
-    width: 280px;
+    width: 400px;
    
     height: 90%;
     background: #007bff;
@@ -44,4 +44,21 @@
     border-top-right-radius: 1.3em;
     border-top-left-radius: 1.3em;
     text-align: center;
+}
+button.active {
+    background-color: #1aff00;
+    color: black;
+    border: 2px solid #0056b3;
+}
+
+.LeftMenu input
+{
+     border-radius: 1.2em;
+     padding: 10px 5px; /*Лево-Право Вверх-вниз*/
+     font-size: 20px;
+     font-weight: 600;
+     color: rgb(0, 0, 0);
+     background-color: white;
+     border: 3px solid black;
+     margin-bottom: 12px;
 }
