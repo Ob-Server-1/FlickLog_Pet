@@ -64,7 +64,7 @@ public class DataController : ControllerBase //ДАнный контроллер
             return StatusCode(500, "Призошла ошибка на сервере, оперативно доставил в штаб");
         }
     }
-
+    
     [HttpGet("GetCard")]
     public async Task<IActionResult> Stat([FromQuery] SortAndSearch request)
     {
@@ -76,7 +76,7 @@ public class DataController : ControllerBase //ДАнный контроллер
                 (string.IsNullOrEmpty(request.search) ||
                  EF.Functions.Like(
                      EF.Functions.Collate(x.NameFilm, "NOCASE"),
-                     $"%{Strok.ToTitleCase(request.search)}%")));
+                     $"%{Strok.ToTitleCase(request.search ?? "")}%")));
 
         if (!string.IsNullOrEmpty(request.sortStatuc))
         {
@@ -146,8 +146,10 @@ public static class Strok
 {
     public static string ToTitleCase(string input)
 {
-    if (string.IsNullOrEmpty(input))
-        return input;
+        if (string.IsNullOrEmpty(input))
+        {
+            return input;
+        }
 
     if (input.Length == 1)
         return input.ToUpper();

@@ -11,39 +11,91 @@
     <link rel="stylesheet" href="CSS/CardStyle.css" />
   </head>
   <body>
-    <div class="TopMenu">
-      <nav class="ButtonMenu">
-        <a href="index.html">Главная</a>
-        <a href="register.html">Регистрация</a>
-        <a href="vhod.html">Войти</a>
-      </nav>
-    </div>
-    <div class="layout">
-      <div class="LeftMenu">
-        <h2 class="LeftMenu-title">Сортировка</h2>
-        <button href="index.html">Показать все</button>
-        <button href="index.html">По дате выхода серии</button>
-        <h2 class="LeftMenu-title">Статус</h2>
-        <button href="index.html">По дате выхода серии</button>
-        <button href="index.html">Нажми на меня</button>
-        <button href="index.html">По дате выхода серии</button>
-        <button href="index.html">Нажми на меня</button>
+      <div class="TopMenu">
+          <nav class="ButtonMenu">
+              <a href="index.html">Главная</a>
+              <a href="register.html">Регистрация</a>
+              <a href="vhod.html">Войти</a>
+          </nav>
+      </div>
+      <div class="layout">
+          <div class="LeftMenu">
+              <h2 class="LeftMenu-title">Сортировка</h2>
+              <button href="index.html">Показать все</button>
+              <button href="index.html">По дате выхода серии</button>
+              <h2 class="LeftMenu-title">Статус</h2>
+              <button href="index.html">По дате выхода серии</button>
+              <button href="index.html">Нажми на меня</button>
+              <button href="index.html">По дате выхода серии</button>
+              <button href="index.html">Нажми на меня</button>
+          </div>
+
+          <!--Полная логика карточек начинается здесь
+            1) Карточка с плюсом всегда первая
+            2) после неё идут следющие карточки
+            3) Карточки и их сортировка всегда идут от бекенда и
+            не сохраняются в куках-->
+
+          <div class="cards-container" id="cards-container">
+              <div class="card card-add" id="addCard">
+                  <span class="card-add-icon">+</span>
+              </div>
+          </div>
       </div>
 
-      <!--Полная логика карточек начинается здесь
-1) Карточка с плюсом всегда первая
-2) после неё идут следющие карточки
-3) Карточки и их сортировка всегда идут от бекенда и
-не сохраняются в куках-->
+      <!--Анимация и появление карточек-->
+      <script src="ScripsJs//CardScript.js"></script>
 
-      <div class="cards-container">
-        <div class="card card-add" id="addCard">
-          <span class="card-add-icon">+</span>
-        </div>
-      </div>
-    </div>
+      <!--Логика карточек но через бекенд-->
+      <script>
+          (async () => {
+              try {
+                  const response = await fetch("/api/data/GetCard");
 
-    <script src="ScripsJs//CardScript.js"></script>
+                  if (!response.ok) {
+                      // ✅ Сначала получаем ошибку из тела
+                      const errorData = await response.json().catch(() => ({}));
+                      throw new Error(
+                          `Ошибка: ${response.status} ${response.statusText}. ${JSON.stringify(errorData)}`
+                      );
+                  }
+
+                  // ✅ Только если всё ок — читаем нормальный ответ
+                  const result = await response.json();
+                  console.log("Данные:", result);
+
+                  const container = document.getElementById("cards-container");
+                  if (!container) {
+                      console.warn("Контейнер с id 'cards-container' не найден");
+                      return;
+                  }
+
+                  const arrCards = result.data;
+
+                  if (!Array.isArray(arrCards)) {
+                      console.warn("Ожидался массив, но получен:", arrCards);
+                      return;
+                  }
+
+                  for (let item of arrCards) {
+                      const card = document.createElement("div");
+                      card.className = "card";
+                      card.innerHTML = `
+                          <strong>${item.nameFilm}</strong>
+                          <p>${item.link}</p>
+                          <p>Серия: ${item.serNumber}</p>
+                          <p>Дата: ${item.dateTime}</p>
+                          <p>Статус: ${item.statuc}</p>
+                      `;
+                      container.appendChild(card);
+                  }
+              }
+              catch (error) {
+                  console.error("Ошибка при запросе:", error);
+                  // Можно показать alert или сообщение на странице
+                  alert("Не удалось загрузить данные: " + error.message);
+              }
+          })();
+      </script>
   </body>
-  
 </html>

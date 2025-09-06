@@ -18,18 +18,9 @@ builder.Services.AddScoped<JWT_TokenProvider>();
 builder.Services.AddControllers();
 
 builder.Services.AddApiAuthentication(builder.Configuration);
-builder.Services.AddSwaggerGen();
-builder.Services.AddEndpointsApiExplorer();
-
 
 
 var app = builder.Build();
-
-if (app.Environment.IsDevelopment())
-{
-	app.UseSwagger();
-	app.UseSwaggerUI();
-}
 
 app.UseCookiePolicy(new CookiePolicyOptions
 {
@@ -38,12 +29,13 @@ app.UseCookiePolicy(new CookiePolicyOptions
     Secure = CookieSecurePolicy.Always
 }); //Поликтки куки для безопасности
 
-//app.UseStaticFiles();
+app.UseStaticFiles();
 app.UseRouting();
 
 //app.MapFallbackToFile("index.html"); // Перехватывает все маршруты и возвращает index.html
 app.UseHttpsRedirection();
-app.MapControllers();
+
 app.UseAuthentication(); 
 app.UseAuthorization();
+app.MapControllers();
 app.Run();
