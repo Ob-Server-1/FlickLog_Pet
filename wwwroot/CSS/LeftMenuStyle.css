@@ -62,3 +62,18 @@ button.active {
      border: 3px solid black;
      margin-bottom: 12px;
 }
+
+.statuc-btn {
+    padding: 10px 15px;
+    margin: 5px;
+    border: 1px solid #ccc;
+    background: white;
+    cursor: pointer;
+}
+
+.statuc-btn.active,
+.statuc-btn:hover {
+        background: #007bff;
+        color: white;
+        border-color: #0056b3;
+    }

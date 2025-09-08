@@ -1,137 +1,139 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
+<html lang="ru">
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Главная страница</title>
     <link rel="stylesheet" href="CSS/BackgroundStyle.css" />
-    <!--Стиль фона-->
     <link rel="stylesheet" href="CSS/TopMenuStyle.css" />
     <link rel="stylesheet" href="CSS/LeftMenuStyle.css" />
     <link rel="stylesheet" href="CSS/CardStyle.css" />
-  </head>
-  <body>
-      <div class="TopMenu">
-          <nav class="ButtonMenu">
-              <a href="index.html">Главная</a>
-              <a href="register.html">Регистрация</a>
-              <a href="vhod.html">Войти</a>
-          </nav>
-      </div>
-      <div class="layout">
-          <div id="LeftMenu" class="LeftMenu">
-              <h2 class="LeftMenu-title">Меню сортировки</h2>
-              <button id="GetAll">Показать все</button>
+</head>
+<body>
+    <div class="TopMenu">
+        <nav class="ButtonMenu">
+            <a href="index.html">Главная</a>
+            <a href="register.html">Регистрация</a>
+            <a href="vhod.html">Войти</a>
+        </nav>
+    </div>
 
+    <div class="layout">
+        <!-- ✅ Заменил id на class для кнопок статуса -->
+        <div id="LeftMenu" class="LeftMenu">
+            <h2 class="LeftMenu-title">Меню сортировки</h2>
+            <button id="GetAll">Показать все</button>
 
+            <h2 class="LeftMenu-title">Поиск</h2>
+            <input type="text" id="searchText" class="search" placeholder="Поиск по названию">
+            <button id="search">Поиск</button>
 
-              <h2 class="LeftMenu-title">Поиск</h2>
-              <input type="text" id="searchText" name="text" class="search" placeholder="Поиск по названию">
-              <button id="search">Поиск</button>
+            <h2 class="LeftMenu-title">Сортировка</h2>
+            <button id="FilterDate" type="button">По дате выхода серии</button>
 
-              <h2 class="LeftMenu-title">Сортировка</h2>
+            <h2 class="LeftMenu-title">Статус</h2>
+            <!-- ✅ Убраны дубли id, исправлено data-filter -->
+            <div class="statuc-buttons">
+                <button class="statuc-btn" data-filter="pr">Просмотренно</button>
+                <button class="statuc-btn" data-filter="sm">Смотрю</button>
+                <button class="statuc-btn" data-filter="zb">Заброшено</button>
+            </div>
+        </div>
 
-              <button id="FilterDate" type="button">По дате выхода серии</button>
+        <div class="cards-container" id="cards-container">
+            <div class="card card-add" id="addCard">
+                <span class="card-add-icon">+</span>
+            </div>
+        </div>
+    </div>
 
-              <h2 class="LeftMenu-title">Статус</h2>
-              <div class="statuc-buttons">
+    <!-- ✅ Исправлен путь: // → / -->
+    <script src="ScripsJs/CardScript.js"></script>
+    <script src="ScripsJs/StandsrtPage.js"></script>
 
-              <button id="statucButton" data-fulter="Pr">Просмотренно</button>
-              <button id="statucButton" data-fulter="Sm">Смотрю</button>
-              <button id="statucButton" data-fulter="Zb">Заброшено</button>
+    <script>
+        // ✅ Обработчик: сортировка по дате
+        document.getElementById("FilterDate").addEventListener("click", function () {
+            const isActive = this.classList.toggle("active");
+            this.dataset.active = isActive;
+        });
 
-              </div>
-          </div>
+        // ✅ Переместил обработчики кнопок статуса ВНЕ обработчика "Поиск"
+        const statucButtons = document.querySelectorAll(".statuc-btn");
+        statucButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                statucButtons.forEach(btn => {
+                    btn.classList.remove("active");
+                    btn.dataset.active = "false";
+                });
+                this.classList.add("active");
+                this.dataset.active = "true";
+            });
+        });
 
-          <!--Полная логика карточек начинается здесь
-            1) Карточка с плюсом всегда первая
-            2) после неё идут следющие карточки
-            3) Карточки и их сортировка всегда идут от бекенда и
-            не сохраняются в куках-->
+        // ✅ Обработчик: поиск
+        document.getElementById("search").addEventListener("click", async () => {
+            const search = document.getElementById("searchText").value;
 
-          <div class="cards-container" id="cards-container">
-              <div class="card card-add" id="addCard">
-                  <span class="card-add-icon">+</span>
-              </div>
-          </div>
-      </div>
+            const params = new URLSearchParams();
 
-      <!--Анимация и появление карточек-->
-      <script src="ScripsJs//CardScript.js"></script>
+            // ✅ Исправлен селектор: .statuc-btn.active
+            const activeBtn = document.querySelector(".statuc-btn.active");
+            const filter = activeBtn?.dataset.filter || ""; // ✅ data-filter, не data-statuc
 
-      <!--Логика появление после перезагрузки страницы-->
-      <script src="ScripsJs/StandsrtPage.js"></script>
+            if (filter) {
+                params.append("sortStatuc", filter);
+            }
 
-        <!--Логика при добавление строки поиска-->
-      <script>
+            if (search) {
+                params.append("search", search);
+            }
 
-          document.getElementById("FilterDate").addEventListener("click", function () {
-              const isActive = this.classList.toggle("active");
-              this.dataset.active = isActive;
-          });
+            const filterBtn = document.getElementById("FilterDate");
+            if (filterBtn?.dataset.active === "true") {
+                params.append("sortData", "desc");
+            }
 
-          // ✅ Обработчик клика по кнопке "Поиск"
-          document.getElementById("search").addEventListener("click", async () => {
-              const search = document.getElementById("searchText").value;
+            const url = `/api/data/GetCard?${params}`;
 
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
+                }
 
-              const params = new URLSearchParams();
-              if (search) {
-                  params.append("search", search);
-              }
+                const result = await response.json();
+                const container = document.getElementById("cards-container");
+                if (!container) {
+                    console.warn("Контейнер с id 'cards-container' не найден");
+                    return;
+                }
 
+                container.innerHTML = ''; // Очищаем
 
-              const filterBtn = document.getElementById("FilterDate");
-              if (filterBtn?.dataset.active === "true") {
-                  params.append("sortData", "desc");
-              }
+                const arrCards = result.data;
+                if (!Array.isArray(arrCards)) {
+                    console.warn("Ожидался массив, но получен:", arrCards);
+                    return;
+                }
 
-
-              const url = `/api/data/GetCard?${params}`;
-
-              try {
-                  const response = await fetch(url);
-
-                  if (!response.ok) {
-                      throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
-                  }
-
-                  const result = await response.json();
-                  const container = document.getElementById("cards-container");
-
-                  if (!container) {
-                      console.warn("Контейнер с id 'cards-container' не найден");
-                      return;
-                  }
-
-                  // ✅ Очищаем контейнер перед добавлением новых карточек
-                  container.innerHTML = ''; // ✅ ВАЖНО: иначе карточки будут дублироваться
-
-                  const arrCards = result.data;
-
-                  if (!Array.isArray(arrCards)) {
-                      console.warn("Ожидался массив, но получен:", arrCards);
-                      return;
-                  }
-
-                  for (let item of arrCards) {
-                      const card = document.createElement("div");
-                      card.className = "card";
-                      card.innerHTML = `
-                          <strong>${item.nameFilm}</strong>
-                          <p>${item.link}</p>
-                          <p>Серия: ${item.serNumber}</p>
-                          <p>Дата следующей серии: ${item.dateTime}</p>
-                          <p>Статус: ${item.statuc}</p>
-                      `;
-                      container.appendChild(card);
-                  }
-              }
-              catch (error) {
-                  console.error("Ошибка при запросе:", error);
-                  alert("Не удалось загрузить данные: " + error.message);
-              }
-          });
-      </script>
-  </body>
+                for (let item of arrCards) {
+                    const card = document.createElement("div");
+                    card.className = "card";
+                    card.innerHTML = `
+                            <strong>${item.nameFilm}</strong>
+                            <p>${item.link}</p>
+                            <p>Серия: ${item.serNumber}</p>
+                            <p>Дата следующей серии: ${item.dateTime}</p>
+                            <p>Статус: ${item.statuc}</p>
+                        `;
+                    container.appendChild(card);
+                }
+            } catch (error) {
+                console.error("Ошибка при запросе:", error);
+                alert("Не удалось загрузить данные: " + error.message);
+            }
+        });
+    </script>
+</body>
 </html>
