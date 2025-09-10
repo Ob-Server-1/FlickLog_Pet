@@ -1,80 +1,108 @@
 // Находим карточку-плюс по ID
 const addCard = document.getElementById('addCard');
 
-// Находим контейнер, куда будем добавлять карточки
+// Находим контейнер
 const container = document.querySelector('.cards-container');
-
-// Счётчик для уникальных ID карточек (чтобы потом удалять/редактировать)
-let cardIdCounter = 0;
 
 // --- ФУНКЦИЯ: ПОКАЗАТЬ ФОРМУ ДОБАВЛЕНИЯ ---
 addCard.addEventListener('click', () => {
     // Проверяем: уже ли открыта форма?
-    // Нельзя открывать две формы одновременно
     if (document.querySelector('.card-form')) {
-        return; // Если есть — выходим
+        return; // Нельзя открывать две формы
     }
 
-    // Создаём новую карточку-форму
+    // Создаём форму
     const formCard = document.createElement('div');
-    formCard.className = 'card card-form'; // Классы для стилей
+    formCard.className = 'card card-form';
 
-    // Заполняем форму полями и кнопками
     formCard.innerHTML = `
-        <input type="text" placeholder="Заголовок" autofocus />
-        <input type="text" placeholder="Описание" />
+        <input type="text" id="nameFilmCard" placeholder="Название фильма" autofocus />
+        <input type="text" id="linkCard" placeholder="Ссылка на фильм" />
+        <input type="text" id="numberCard" placeholder="Номер серии" />
+        <input type="text" id="dateCard" placeholder="Дата выхода следующей серии" />
+        <select id="status">
+            <option value="pr">Просмотрено</option>
+            <option value="sm">Смотрю</option>
+            <option value="zb">Заброшено</option>
+        </select>
         <div class="card-actions">
             <button type="button" class="btn-ok">✅ ОК</button>
             <button type="button" class="btn-cancel">❌ Отмена</button>
         </div>
     `;
 
-    /*
-        ВАЖНО: вставляем форму СРАЗУ ПОСЛЕ карточки-плюса.
-        То есть: [ + ] [ Форма ] [ Старые карточки... ]
-        Это гарантирует, что плюс всегда остаётся первым.
-    */
     container.insertBefore(formCard, addCard.nextSibling);
-
-    // Фокус на первое поле
     formCard.querySelector('input').focus();
 
     // --- КНОПКА "ОК" ---
-    formCard.querySelector('.btn-ok')
-    .addEventListener('click', () => {
-        // Получаем значения из полей
-        const title = formCard.querySelector('input:nth-of-type(1)').value.trim();
-        const desc = formCard.querySelector('input:nth-of-type(2)').value.trim();
+    formCard.querySelector('.btn-ok').addEventListener('click', async () => {
+        // ✅ Собираем данные по id
+        const nameFilm = document.getElementById("nameFilmCard").value.trim();
+        const link = document.getElementById("linkCard").value.trim(); // ❌ Было linkCard
+        const serNumber = document.getElementById("numberCard").value.trim();
+        const dateTime = document.getElementById("dateCard").value.trim();
+        const statuc = document.getElementById("status").value.trim(); // ❌ Было statusCard
 
-        // Проверяем, что заголовок не пустой
-        if (!title) {
-            alert('Введите заголовок!');
+        // ✅ Проверка обязательных полей
+        if (!nameFilm) {
+            alert('Введите название фильма!');
             return;
         }
 
-        // Создаём новую карточку с данными
-        createCard(title, desc);
+        // ✅ Отправляем на бэкенд
+        try {
+            const response = await fetch("/api/data/add", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json" // ❌ Было aplecation/json
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    nameFilm,
+                    link,
+                    serNumber,
+                    dateTime,
+                    statuc
+                })
+            });
 
-        // Удаляем форму
+            if (response.ok) {
+                const newCard = await response.json();
+                console.log("Карточка создана:", newCard);
+                alert("Карточка успешно создана");
+
+                // ✅ Создаём карточку на фронтенде
+                createCardOnFrontend(newCard); // Передаём данные с бэкенда
+            } else {
+                const error = await response.json().catch(() => ({}));
+                alert(`Ошибка: ${error.message || 'Не удалось сохранить'}`);
+            }
+        } catch (error) {
+            console.error("Ошибка сети:", error);
+            alert("Не удалось подключиться к серверу");
+        }
+
+        // ✅ Удаляем форму
         formCard.remove();
     });
 
     // --- КНОПКА "ОТМЕНА" ---
-    formCard.querySelector('.btn-cancel')
-    .addEventListener('click', () => {
-        formCard.remove(); // Просто удаляем форму
+    formCard.querySelector('.btn-cancel').addEventListener('click', () => {
+        formCard.remove();
     });
 });
 
-// --- ФУНКЦИЯ: СОЗДАТЬ НОВУЮ КАРТОЧКУ ---
-function createCard(title, description) {
+// --- ФУНКЦИЯ: СОЗДАТЬ КАРТОЧКУ НА ФРОНТЕНДЕ ---
+function createCardOnFrontend(data) {
     const card = document.createElement('div');
     card.className = 'card';
-    card.dataset.id = ++cardIdCounter;
 
     card.innerHTML = `
-        <strong>${title}</strong>
-        <p>${description || ''}</p>
+        <strong>${data.nameFilm}</strong>
+        <p>${data.link || ''}</p>
+        <p>Серия: ${data.serNumber || ''}</p>
+        <p>Дата: ${data.dateTime || ''}</p>
+        <p>Статус: ${data.statuc || ''}</p>
         <div class="card-actions">
             <button class="edit-btn" aria-label="Редактировать">📝</button>
             <button class="delete-btn" aria-label="Удалить">🗑️</button>
@@ -84,7 +112,7 @@ function createCard(title, description) {
     // Вставляем карточку
     container.insertBefore(card, addCard.nextSibling);
 
-    // Привязываем события — ВАЖНО: делаем это здесь
+    // ✅ Привязываем события
     attachCardEvents(card);
 }
 

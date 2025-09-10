@@ -8,8 +8,8 @@ public record class Data_Add(
     string Link,
     int SerNumber, 
     string DateTime, 
-    string Statuc, 
-    string UserId); //Для POST запроса на добавление данных
+    string Statuc
+   ); //Для POST запроса на добавление данных
 
 public record class Data_Change(int Id, 
     string NameFilm, 

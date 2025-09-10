@@ -71,9 +71,9 @@ button.active {
     cursor: pointer;
 }
 
-.statuc-btn.active,
-.statuc-btn:hover {
-        background: #007bff;
+    .statuc-btn.active,
+    .statuc-btn:hover {
+        background: #62ff00;
         color: white;
         border-color: #0056b3;
     }

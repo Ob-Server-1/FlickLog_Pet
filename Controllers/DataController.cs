@@ -25,6 +25,7 @@ public class DataController : ControllerBase //ДАнный контроллер
     [HttpPost("Add")]
     public async Task<IActionResult> AddData([FromBody] Data_Add request)
     {
+        Console.WriteLine("Задействуеться контроллер  POST AddData!");
         string? requestCookies = Request.Cookies["Token"]; // Отлавливаем куки с ответом
         if (string.IsNullOrEmpty(requestCookies))
         {
@@ -41,7 +42,7 @@ public class DataController : ControllerBase //ДАнный контроллер
             {
                 NameFilm = request.NameFilm,
                 Link = request.Link,
-                DateTime = DateTime.Now.ToString(),
+                DateTime = request.DateTime,
                 SerNumber = request.SerNumber,
                 Statuc = request.Statuc,
                 UserId = userId
