@@ -49,7 +49,7 @@ public class DataController : ControllerBase //ДАнный контроллер
             };
             await _context.DataModel.AddAsync(dataModel);
             await _context.SaveChangesAsync();
-            return Ok($"Ваши данные успешно получены");
+            return Ok(dataModel);
         }
         catch (ArgumentException ex)
         {
@@ -83,7 +83,7 @@ public class DataController : ControllerBase //ДАнный контроллер
         {
             data = data.Where(x => x.Statuc ==request.sortStatuc);
         }
-
+        
 
         if (request.sortData == "desc")
         {

@@ -20,11 +20,13 @@ addCard.addEventListener('click', () => {
         <input type="text" id="linkCard" placeholder="Ссылка на фильм" />
         <input type="text" id="numberCard" placeholder="Номер серии" />
         <input type="text" id="dateCard" placeholder="Дата выхода следующей серии" />
+
         <select id="status">
             <option value="pr">Просмотрено</option>
             <option value="sm">Смотрю</option>
             <option value="zb">Заброшено</option>
         </select>
+
         <div class="card-actions">
             <button type="button" class="btn-ok">✅ ОК</button>
             <button type="button" class="btn-cancel">❌ Отмена</button>
@@ -73,6 +75,7 @@ addCard.addEventListener('click', () => {
 
                 // ✅ Создаём карточку на фронтенде
                 createCardOnFrontend(newCard); // Передаём данные с бэкенда
+                console.log(newCard);
             } else {
                 const error = await response.json().catch(() => ({}));
                 alert(`Ошибка: ${error.message || 'Не удалось сохранить'}`);
@@ -96,13 +99,22 @@ addCard.addEventListener('click', () => {
 function createCardOnFrontend(data) {
     const card = document.createElement('div');
     card.className = 'card';
+    const statucLast = {
+        pr: "Просмотренно",
+        sm: "Смотрю",
+        zb: "Заброшено"
+    }[data.statuc] || "Неизвестно!";
+
+
+    
+
 
     card.innerHTML = `
         <strong>${data.nameFilm}</strong>
         <p>${data.link || ''}</p>
         <p>Серия: ${data.serNumber || ''}</p>
         <p>Дата: ${data.dateTime || ''}</p>
-        <p>Статус: ${data.statuc || ''}</p>
+        <p>Статус: ${statucLast || ''}</p>
         <div class="card-actions">
             <button class="edit-btn" aria-label="Редактировать">📝</button>
             <button class="delete-btn" aria-label="Удалить">🗑️</button>

@@ -65,13 +65,19 @@ document.getElementById("search").addEventListener("click", async () => {
 
         for (let item of arrCards) {
             const card = document.createElement("div");
+            const statucLast = {
+                pr: "Просмотренно",
+                sm: "Смотрю",
+                zb: "Заброшено"
+            }[item.statuc] || "Неизвестно!";
+
             card.className = "card";
             card.innerHTML = `
                             <strong>${item.nameFilm}</strong>
                             <p>${item.link}</p>
                             <p>Серия: ${item.serNumber}</p>
                             <p>Дата следующей серии: ${item.dateTime}</p>
-                            <p>Статус: ${item.statuc}</p>
+                            <p>Статус: ${statucLast}</p>
                         `;
             container.appendChild(card);
         }

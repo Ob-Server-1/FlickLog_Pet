@@ -29,6 +29,12 @@
         }
         container.innerHTML = "";
         for (let item of arrCards) {
+            const statucLast = {
+                pr: "Просмотренно",
+                sm: "Смотрю",
+                zb: "Заброшено"
+            }[item.statuc] || "Неизвестно!";
+
             const card = document.createElement("div");
             card.className = "card";
             card.innerHTML = `
@@ -36,7 +42,7 @@
                           <p>${item.link}</p>
                           <p>Серия: ${item.serNumber}</p>
                           <p>Дата следующей серии: ${item.dateTime}</p>
-                          <p>Статус: ${item.statuc}</p>
+                          <p>Статус: ${statucLast}</p>
                       `;
             container.appendChild(card);
         }
