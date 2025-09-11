@@ -20,9 +20,9 @@
 
 .card 
 {
-    width: 200px;
+    width: 220px;
     min-height: 120px;
-    max-height: 250px;
+    max-height: 270px;
  
     background: white;
     border: 4px solid black;
@@ -63,6 +63,15 @@ border-radius: 6px;
 font-size: 0.9rem;
 width: 100%;
 overflow-wrap: break-word;
+}
+.card-form select {
+    padding: 8px;
+    overflow-wrap: break-word;
+    border: 1px solid black;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    width: 100%;
+    overflow-wrap: break-word;
 }
 
 .card-form button:hover

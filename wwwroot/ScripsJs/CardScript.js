@@ -13,13 +13,14 @@ addCard.addEventListener('click', () => {
 
     // Создаём форму
     const formCard = document.createElement('div');
-    formCard.className = 'card card-form';
+    formCard.className = `card card-form`;
+    formCard.dataset.cardId = "";
 
     formCard.innerHTML = `
         <input type="text" id="nameFilmCard" placeholder="Название фильма" autofocus />
         <input type="text" id="linkCard" placeholder="Ссылка на фильм" />
-        <input type="text" id="numberCard" placeholder="Номер серии" />
-        <input type="text" id="dateCard" placeholder="Дата выхода следующей серии" />
+        <input type="number" min="1" max="100000" id="numberCard" placeholder="Номер серии" />
+        <input type="date" id="dateCard" placeholder="Дата выхода следующей серии" />
 
         <select id="status">
             <option value="pr">Просмотрено</option>
@@ -99,6 +100,9 @@ addCard.addEventListener('click', () => {
 function createCardOnFrontend(data) {
     const card = document.createElement('div');
     card.className = 'card';
+    card.dataset.cardId = data.id;
+
+
     const statucLast = {
         pr: "Просмотренно",
         sm: "Смотрю",
@@ -106,9 +110,7 @@ function createCardOnFrontend(data) {
     }[data.statuc] || "Неизвестно!";
 
 
-    
-
-
+   
     card.innerHTML = `
         <strong>${data.nameFilm}</strong>
         <p>${data.link || ''}</p>
