@@ -50,12 +50,15 @@ document.getElementById("search").addEventListener("click", async () => {
 
         const result = await response.json();
         const container = document.getElementById("cards-container");
+
         if (!container) {
             console.warn("Контейнер с id 'cards-container' не найден");
             return;
         }
 
-        container.innerHTML = ''; // Очищаем
+        Array.from(container.children)
+            .filter(child => child.id !== 'addCard')
+            .forEach(child => child.remove());
 
         const arrCards = result.data;
         if (!Array.isArray(arrCards)) {
@@ -72,14 +75,20 @@ document.getElementById("search").addEventListener("click", async () => {
             }[item.statuc] || "Неизвестно!";
 
             card.className = "card";
+            card.dataset.cardId = item.id;
             card.innerHTML = `
                             <strong>${item.nameFilm}</strong>
                             <p>${item.link}</p>
                             <p>Серия: ${item.serNumber}</p>
                             <p>Дата следующей серии: ${item.dateTime}</p>
                             <p>Статус: ${statucLast}</p>
+                            <div class="card-actions">
+            <button class="edit-btn" aria-label="Редактировать">📝</button>
+            <button class="delete-btn" aria-label="Удалить">🗑️</button>
+        </div>
                         `;
             container.appendChild(card);
+            attachCardEvents(card);
         }
     } catch (error) {
         console.error("Ошибка при запросе:", error);

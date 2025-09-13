@@ -126,7 +126,15 @@ public class DataController : ControllerBase //ДАнный контроллер
         CheackIf.Statuc = request.Statuc;
 
         await _context.SaveChangesAsync();
-        return NoContent();
+        return Ok(new
+        {
+            id=idCard,
+            CheackIf.NameFilm,
+            CheackIf.Link,
+            CheackIf.SerNumber,
+            CheackIf.DateTime,
+            CheackIf.Statuc
+        });
     }
     [HttpDelete("DeleteCard/{idCard}")]
     public async Task<IActionResult> DeleteCard(int idCard)
@@ -139,7 +147,8 @@ public class DataController : ControllerBase //ДАнный контроллер
 
         _context.DataModel.Remove(CheackIf);
         await _context.SaveChangesAsync();
-        return Ok();
+        return Ok(new { 
+        message="Все норм карточка была удалена"});
     }
 }
 

@@ -11,10 +11,9 @@ public record class Data_Add(
     string Statuc
    ); //Для POST запроса на добавление данных
 
-public record class Data_Change(int Id, 
+public record class Data_Change( 
     string NameFilm, 
     string Link, 
     int SerNumber, 
     string DateTime, 
-    string Statuc,
-    string UserId); //Для Put запроса на изменение данных
+    string Statuc); //Для Put запроса на изменение данных

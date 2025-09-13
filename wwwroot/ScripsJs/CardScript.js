@@ -115,7 +115,7 @@ function createCardOnFrontend(data) {
         <strong>${data.nameFilm}</strong>
         <p>${data.link || ''}</p>
         <p>Серия: ${data.serNumber || ''}</p>
-        <p>Дата: ${data.dateTime || ''}</p>
+        <p>Дата выхода след. серии: ${data.dateTime || ''}</p>
         <p>Статус: ${statucLast || ''}</p>
         <div class="card-actions">
             <button class="edit-btn" aria-label="Редактировать">📝</button>
@@ -132,65 +132,148 @@ function createCardOnFrontend(data) {
 
 // --- ФУНКЦИЯ: привязать события к карточке ---
 function attachCardEvents(card) {
-    // Удаление
-    card.querySelector('.delete-btn').addEventListener('click', () => {
-        card.remove();
+    // --- УДАЛЕНИЕ ---
+    card.querySelector('.delete-btn').addEventListener('click', async () => {
+        const readCardId = +card.dataset.cardId;
+
+        try {
+            const response = await fetch(`/api/data/deleteCard/${readCardId}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include"
+            });
+
+            if (!response.ok) {
+                throw new Error(`Ошибка: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log("Карточка удалена:", result);
+            card.remove();
+            alert("Карточка успешно удалена!");
+        } catch (error) {
+            console.error("Ошибка при удалении:", error);
+            alert("Не удалось удалить карточку");
+        }
     });
 
-    // Редактирование
+    // --- РЕДАКТИРОВАНИЕ ---
     card.querySelector('.edit-btn').addEventListener('click', () => {
-        const currentTitle = card.querySelector('strong').textContent;
-        const currentDesc = card.querySelector('p').textContent;
+        const idCard = card.dataset.cardId;
+
+        // ✅ Получаем данные из карточки (не из input!)
+        const filmName = card.querySelector('strong').textContent;
+        const link = card.querySelector('p:nth-of-type(1)').textContent;
+        const serNumber = card.querySelector('p:nth-of-type(2)').textContent
+            .replace('Серия: ', '')
+            .trim();
+        const dateTime = card.querySelector('p:nth-of-type(3)').textContent
+            .split(': ')[1]; // → "2025-04-10"
+        const statuc = card.querySelector('p:nth-of-type(4)')
+            .textContent
+            .split(': ')[1]
+            .trim(); // ✅ Убирает пробелы, табуляцию, переносы
 
         const editForm = document.createElement('div');
         editForm.className = 'card card-form';
-        editForm.dataset.id = card.dataset.id;
+        editForm.dataset.cardId = idCard;
 
         editForm.innerHTML = `
-            <input type="text" value="${currentTitle}" />
-            <input type="text" value="${currentDesc}" />
+            <input type="text" value="${filmName}" id="nameFilmCard" placeholder="Название фильма" autofocus />
+            <input type="text" value="${link}" id="linkCard" placeholder="Ссылка на фильм" />
+            <input type="number" value="${serNumber}" min="1" max="100000" id="numberCard" placeholder="Номер серии" />
+            <input type="date" value="${dateTime}" id="dateCard" placeholder="Дата выхода следующей серии" />
+            <select id="status">
+                <option value="pr" ${statuc === "Просмотрено" ? "selected" : ""}>Просмотрено</option>
+                <option value="sm" ${statuc === "Смотрю" ? "selected" : ""}>Смотрю</option>
+                <option value="zb" ${statuc === "Заброшено" ? "selected" : ""}>Заброшено</option>
+            </select>
             <div class="card-actions">
-                <button type="button" class="save-btn">✅ Сохранить</button>
-                <button type="button" class="cancel-edit">❌ Отмена</button>
+                <button type="button" class="btn-ok">✅ ОК</button>
+                <button type="button" class="btn-cancel">❌ Отмена</button>
             </div>
         `;
 
         container.replaceChild(editForm, card);
 
-        // --- КНОПКА "СОХРАНИТЬ" ---
-        editForm.querySelector('.save-btn').addEventListener('click', () => {
-            const newTitle = editForm.querySelector('input:nth-of-type(1)').value.trim();
-            const newDesc = editForm.querySelector('input:nth-of-type(2)').value.trim();
+        // --- КНОПКА "ОК" ---
+        editForm.querySelector('.btn-ok').addEventListener('click', async () => {
+            // ✅ Получаем новые значения из формы
+            const newFilmName = document.getElementById("nameFilmCard").value.trim();
+            const newLink = document.getElementById("linkCard").value.trim();
+            const newSerNumber = document.getElementById("numberCard").value.trim();
+            const newDateTime = document.getElementById("dateCard").value;
+            const newStatuc = document.getElementById("status").value;
 
-            if (!newTitle) {
-                alert('Введите заголовок!');
+            if (!newFilmName) {
+                alert("Введите название фильма!");
                 return;
             }
 
-            // Создаём новую карточку
-            const updatedCard = document.createElement('div');
-            updatedCard.className = 'card';
-            updatedCard.dataset.id = editForm.dataset.id;
-            updatedCard.innerHTML = `
-                <strong>${newTitle}</strong>
-                <p>${newDesc}</p>
+            try {
+                const response = await fetch(`/api/data/changeCard/${idCard}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    credentials: "include",
+                    body: JSON.stringify({
+                        nameFilm: newFilmName,
+                        link: newLink,
+                        serNumber: newSerNumber,
+                        dateTime: newDateTime,
+                        statuc: newStatuc
+                    })
+                });
+
+                if (response.ok) {
+                    const updatedData = await response.json();
+
+                    // ✅ Создаём обновлённую карточку
+                    const updatedCard = document.createElement('div');
+                    updatedCard.className = 'card';
+                    updatedCard.dataset.cardId = Number(updatedData.id);
+                    console.log(updatedData.id);
+                    // ✅ Текст статуса
+                    const statusText = { pr: "Просмотрено", sm: "Смотрю", zb: "Заброшено" }[newStatuc] || "Неизвестно";
+
+                    updatedCard.innerHTML = `
+                <strong>${updatedData.nameFilm}</strong>
+                <p>${updatedData.link}</p>
+                <p>Серия: ${updatedData.serNumber}</p>
+                <p>Дата: ${updatedData.dateTime}</p>
+                <p>Статус: ${statusText}</p>
                 <div class="card-actions">
                     <button class="edit-btn">📝</button>
                     <button class="delete-btn">🗑️</button>
                 </div>
             `;
 
-            // Возвращаем карточку
-            container.replaceChild(updatedCard, editForm);
+                    // ✅ Возвращаем карточку в DOM
+                    container.replaceChild(updatedCard, editForm);
 
-            // ✅ Привязываем события к обновлённой карточке
-            attachCardEvents(updatedCard);
+                    // ✅ Привязываем события к новой карточке
+                    attachCardEvents(updatedCard);
+
+                    alert("Карточка успешно отредактирована");
+                } else {
+                    const error = await response.json().catch(() => ({}));
+                    alert(`Ошибка при сохранении: ${error.message || "Неизвестная ошибка"}`);
+                }
+            } catch (error) {
+                console.error("Ошибка сети:", error);
+                alert("Не удалось подключиться к серверу");
+            }
         });
 
         // --- КНОПКА "ОТМЕНА" ---
-        editForm.querySelector('.cancel-edit').addEventListener('click', () => {
+        editForm.querySelector('.btn-cancel').addEventListener('click', () => {
+            // ✅ Возвращаем старую карточку
             container.replaceChild(card, editForm);
-            // События у `card` уже есть — не нужно перепривязывать
+            // События уже есть → не нужно перепривязывать
         });
-    });
-}
+    }); // ← Закрытие .edit-btn.addEventListener
+
+} // ← Закрытие функции attachCardEvents(card)
