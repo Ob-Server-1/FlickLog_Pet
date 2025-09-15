@@ -4,6 +4,7 @@ using FlickLog_Pet.Contract;
 using FlickLog_Pet.Models;
 using FlickLog_Pet.DbAccets;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 namespace FlickLog_Pet.Controllers;
 
 
@@ -74,18 +75,20 @@ public class RegController : ControllerBase
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.Strict,
-            Expires = DateTime.UtcNow.AddDays(1)
+            Expires = DateTime.UtcNow.AddDays(10000)
         });
-            return Ok(token);
+            return Ok($"Вы успешно вошли, добро пожаловать {user.Name}");
         }
     }
 
 
 
-    [HttpGet("AllUser")]
-    public async Task<IActionResult> LogUser()
+    [HttpGet("cheak")]
+    public async Task<IActionResult> Cheak()
     {
-        List<RegModel> last = _context.Users.ToList();
-        return Ok(last); //Проблем высветить всех
+        if (!User.Identity.IsAuthenticated)
+            return Unauthorized();
+
+        return Ok();
     }
 }

@@ -38,13 +38,13 @@ public class DataController : ControllerBase //ДАнный контроллер
             var userId = User.FindFirst("Id")?.Value;
             var userName = User.FindFirst("Name")?.Value;
 
-            DataModel1 dataModel = new DataModel1
+			DataModel1 dataModel = new DataModel1
             {
                 NameFilm = request.NameFilm,
                 Link = request.Link,
                 DateTime = request.DateTime,
                 SerNumber = request.SerNumber,
-                Statuc = request.Statuc,
+				Statuc = request.Statuc,
                 UserId = userId
             };
             await _context.DataModel.AddAsync(dataModel);

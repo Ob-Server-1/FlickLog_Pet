@@ -20,7 +20,7 @@ addCard.addEventListener('click', () => {
         <input type="text" id="nameFilmCard" placeholder="Название фильма" autofocus />
         <input type="text" id="linkCard" placeholder="Ссылка на фильм" />
         <input type="number" min="1" max="100000" id="numberCard" placeholder="Номер серии" />
-        <input type="date" id="dateCard" placeholder="Дата выхода следующей серии" />
+        <input type="date" id="dateCard" placeholder="Дата:" />
 
         <select id="status">
             <option value="pr">Просмотрено</option>
@@ -42,7 +42,9 @@ addCard.addEventListener('click', () => {
         // ✅ Собираем данные по id
         const nameFilm = document.getElementById("nameFilmCard").value.trim();
         const link = document.getElementById("linkCard").value.trim(); // ❌ Было linkCard
-        const serNumber = document.getElementById("numberCard").value.trim();
+        let serNumber = document.getElementById("numberCard").value.trim();
+        serNumber = parseInt(serNumber) || 0;
+
         const dateTime = document.getElementById("dateCard").value.trim();
         const statuc = document.getElementById("status").value.trim(); // ❌ Было statusCard
 
@@ -203,7 +205,10 @@ function attachCardEvents(card) {
             // ✅ Получаем новые значения из формы
             const newFilmName = document.getElementById("nameFilmCard").value.trim();
             const newLink = document.getElementById("linkCard").value.trim();
-            const newSerNumber = document.getElementById("numberCard").value.trim();
+            let newSerNumber = document.getElementById("numberCard").value.trim();
+            newSerNumber = parseInt(newSerNumber) || 0;
+
+
             const newDateTime = document.getElementById("dateCard").value;
             const newStatuc = document.getElementById("status").value;
 

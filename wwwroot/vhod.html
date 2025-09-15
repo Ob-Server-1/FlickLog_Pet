@@ -48,7 +48,6 @@
         .getElementById("loginForm")
         .addEventListener("submit", async (e) => {
           e.preventDefault();
-          e.stopImmediatePropagation();
           const formDataLogin = {
             login: document.getElementById("loginBeta").value,
             password: document.getElementById("passwordBeta").value,
@@ -63,9 +62,10 @@
               },
               body: JSON.stringify(formDataLogin),
             });
-            if (!response.ok) {
-              const response_2 = await response.json();
+            if (response.ok) {
+                const response_2 = await response.text();
                 alert(response_2);
+                window.location.href = "/index.html";
               }
               console.log(response);
           } catch (error) {
