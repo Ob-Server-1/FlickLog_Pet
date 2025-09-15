@@ -87,7 +87,7 @@ public class RegController : ControllerBase
     public async Task<IActionResult> Cheak()
     {
         if (!User.Identity.IsAuthenticated)
-            return Unauthorized();
+            return StatusCode(401);
 
         return Ok();
     }

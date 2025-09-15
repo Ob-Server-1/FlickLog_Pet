@@ -137,29 +137,35 @@ function attachCardEvents(card) {
     // --- УДАЛЕНИЕ ---
     card.querySelector('.delete-btn').addEventListener('click', async () => {
         const readCardId = +card.dataset.cardId;
-
+        const warning = confirm("Удалить эту карточку ?");
+       
         try {
-            const response = await fetch(`/api/data/deleteCard/${readCardId}`, {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                credentials: "include"
-            });
+            if (warning) {
+                const response = await fetch(`/api/data/deleteCard/${readCardId}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    credentials: "include"
+                });
 
-            if (!response.ok) {
-                throw new Error(`Ошибка: ${response.status}`);
+                if (!response.ok) {
+                    throw new Error(`Ошибка: ${response.status}`);
+                }
+
+                const result = await response.json();
+                console.log("Карточка удалена:", result);
+                card.remove();
+                alert("Карточка успешно удалена!");
             }
-
-            const result = await response.json();
-            console.log("Карточка удалена:", result);
-            card.remove();
-            alert("Карточка успешно удалена!");
-        } catch (error) {
-            console.error("Ошибка при удалении:", error);
-            alert("Не удалось удалить карточку");
-        }
-    });
+            else {
+                console.log("Карточка не была удалена!");
+            }
+            } catch (error) {
+                console.error("Ошибка при удалении:", error);
+                alert("Не удалось удалить карточку");
+            }
+        });
 
     // --- РЕДАКТИРОВАНИЕ ---
     card.querySelector('.edit-btn').addEventListener('click', () => {

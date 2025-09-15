@@ -51,24 +51,28 @@
     <!--Фронтовый тип добавления карточек-->
     <!-- AllGet метод, для проявления вообще всех карточек-->
     <script>
-        try {
-            const response = fetch("/reg/cheak");
-            if (response.status === "401") {
-                let con = confirm("Вы регистрировались раньше ?");
-                if (con)
-                {
-                    window.location.href = "/register.html";
-                }
-                else {
-                    window.location.href = "/register.html";
+        (async () => {
+            try {
+                const response = await fetch("/reg/cheak");
+                if (response.status === 401) {
+                    let con = confirm("Вы регистрировались раньше ?");
+                    if (!con) {
+                        window.location.href = "/register.html";
+                    }
+                    else {
+                        window.location.href = "/vhod.html";
+                    }
                 }
             }
-        }
-        catch (error) {
-            console.error("Произошла ошибка:", error);
-            alert("Произошла ошибка, срочно несите печеньки администратору");
-        }
+            catch (error) {
+                console.error("Произошла ошибка:", error);
+                alert("Произошла ошибка, срочно несите печеньки администратору");
+            }
+        })();
     </script>
+
+
+
     <script src="ScripsJs/CardScript.js"></script>
     <script src="ScripsJs/StandsrtPage.js"></script>
     <!--Get метод со всеми фильтрами-->

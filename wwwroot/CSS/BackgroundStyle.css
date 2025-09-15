@@ -1,16 +1,16 @@
 body
 {
     margin: 0;
-    height: 100vh;
+    min-height: 100vh;
     background: linear-gradient(135deg, #f5f7fa 0%, #e2d9c3 100%);
     font-family: 'Segoe UI', sans-serif;
     position: relative;
-    overflow: hidden;
+    overflow: auto;
 }
 
 
 body::before
-{
+{3
     content: "";
     position: absolute;
     bottom: -60px;
