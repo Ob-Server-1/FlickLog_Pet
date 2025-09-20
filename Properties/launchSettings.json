@@ -9,13 +9,12 @@
     }
   },
   "profiles": {
-    "Kestrel (HTTPS)": {
+    "Kestrel (HTTP)": {
       "commandName": "Project",
-        "dotnetRunMessages": true,
-
+      "dotnetRunMessages": true,
       "launchBrowser": true,
-        "applicationUrl": "https://localhost:7047;http://localhost:5180",
       "launchUrl": "index.html",
+      "applicationUrl": "http://0.0.0.0:7047", // 🔥 Ключевое изменение
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

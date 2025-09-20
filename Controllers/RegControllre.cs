@@ -72,9 +72,9 @@ public class RegController : ControllerBase
          HttpContext.Response.Cookies.Append("Token", token, new CookieOptions
         {
             HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.Strict,
-            Expires = DateTime.UtcNow.AddDays(1)
+            Secure = HttpContext.Request.IsHttps,
+            SameSite = SameSiteMode.Lax,
+            Expires = DateTime.UtcNow.AddDays(10000)
         });
             return Ok(token);
         }
