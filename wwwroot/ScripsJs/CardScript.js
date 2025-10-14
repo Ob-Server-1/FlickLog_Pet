@@ -20,7 +20,7 @@ addCard.addEventListener('click', () => {
         <input type="text" id="nameFilmCard" placeholder="Название фильма" autofocus />
         <input type="text" id="linkCard" placeholder="Ссылка на фильм" />
         <input type="number" min="1" max="100000" id="numberCard" placeholder="Номер серии" />
-        <input type="date" id="dateCard" placeholder="Дата выхода следующей серии" />
+        <input type="date" id="dateCard" placeholder="Дата:" />
 
         <select id="status">
             <option value="pr">Просмотрено</option>
@@ -42,7 +42,9 @@ addCard.addEventListener('click', () => {
         // ✅ Собираем данные по id
         const nameFilm = document.getElementById("nameFilmCard").value.trim();
         const link = document.getElementById("linkCard").value.trim(); // ❌ Было linkCard
-        const serNumber = document.getElementById("numberCard").value.trim();
+        let serNumber = document.getElementById("numberCard").value.trim();
+        serNumber = parseInt(serNumber) || 0;
+
         const dateTime = document.getElementById("dateCard").value.trim();
         const statuc = document.getElementById("status").value.trim(); // ❌ Было statusCard
 
@@ -135,29 +137,35 @@ function attachCardEvents(card) {
     // --- УДАЛЕНИЕ ---
     card.querySelector('.delete-btn').addEventListener('click', async () => {
         const readCardId = +card.dataset.cardId;
-
+        const warning = confirm("Удалить эту карточку ?");
+       
         try {
-            const response = await fetch(`/api/data/deleteCard/${readCardId}`, {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                credentials: "include"
-            });
+            if (warning) {
+                const response = await fetch(`/api/data/deleteCard/${readCardId}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    credentials: "include"
+                });
 
-            if (!response.ok) {
-                throw new Error(`Ошибка: ${response.status}`);
+                if (!response.ok) {
+                    throw new Error(`Ошибка: ${response.status}`);
+                }
+
+                const result = await response.json();
+                console.log("Карточка удалена:", result);
+                card.remove();
+                alert("Карточка успешно удалена!");
             }
-
-            const result = await response.json();
-            console.log("Карточка удалена:", result);
-            card.remove();
-            alert("Карточка успешно удалена!");
-        } catch (error) {
-            console.error("Ошибка при удалении:", error);
-            alert("Не удалось удалить карточку");
-        }
-    });
+            else {
+                console.log("Карточка не была удалена!");
+            }
+            } catch (error) {
+                console.error("Ошибка при удалении:", error);
+                alert("Не удалось удалить карточку");
+            }
+        });
 
     // --- РЕДАКТИРОВАНИЕ ---
     card.querySelector('.edit-btn').addEventListener('click', () => {
@@ -203,7 +211,10 @@ function attachCardEvents(card) {
             // ✅ Получаем новые значения из формы
             const newFilmName = document.getElementById("nameFilmCard").value.trim();
             const newLink = document.getElementById("linkCard").value.trim();
-            const newSerNumber = document.getElementById("numberCard").value.trim();
+            let newSerNumber = document.getElementById("numberCard").value.trim();
+            newSerNumber = parseInt(newSerNumber) || 0;
+
+
             const newDateTime = document.getElementById("dateCard").value;
             const newStatuc = document.getElementById("status").value;
 

@@ -55,7 +55,6 @@
         .getElementById("registerForm")
         .addEventListener("submit", async (e) => {
           e.preventDefault();
-          e.stopImmediatePropagation();
           const formData = {
             username: document.getElementById("username").value,
             login: document.getElementById("login").value,
@@ -63,15 +62,24 @@
           };
 
           try {
-            const response = await fetch("/Reg", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(formData),
-            });
+              const response = await fetch("/Reg", {
+                  method: "POST",
+                  headers: {
+                      "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify(formData),
+              }
+              );
+              if (response.ok) {
+                  const result = await response.text();
+                  alert(result);
+              }
+              else {
+                  console.error("Произошла ошибка, АААААААААААААААААААААА");
+}
+
           } catch (error) {
-            console.log(error);
+              console.error(error);
           }
         });
     </script>
