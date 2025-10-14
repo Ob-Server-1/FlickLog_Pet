@@ -1,33 +1,24 @@
-# FlickLog (Карточки для фильмов)
-Простое веб-приложение с CRUD операциями над карточками для записи любимых фильмов которые вы хотите просмотреть или записать те что уже просмоотрели.
-Само приложение запускается в вашей локальной и сети и все компьютеры могут получить к нему доступ.
+п»ї# FlickLog вЂ” РљР°СЂС‚РѕС‡РєРё РґР»СЏ С„РёР»СЊРјРѕРІ
 
-## Технологический стек
+РџСЂРѕСЃС‚РѕРµ РІРµР±-РїСЂРёР»РѕР¶РµРЅРёРµ СЃ РїРѕРґРґРµСЂР¶РєРѕР№ CRUD-РѕРїРµСЂР°С†РёР№ РґР»СЏ СѓРїСЂР°РІР»РµРЅРёСЏ СЃРїРёСЃРєРѕРј С„РёР»СЊРјРѕРІ:  
+РІС‹ РјРѕР¶РµС‚Рµ РґРѕР±Р°РІР»СЏС‚СЊ С„РёР»СЊРјС‹, РєРѕС‚РѕСЂС‹Рµ С…РѕС‚РёС‚Рµ РїРѕСЃРјРѕС‚СЂРµС‚СЊ, Рё РѕС‚РјРµС‡Р°С‚СЊ СѓР¶Рµ РїСЂРѕСЃРјРѕС‚СЂРµРЅРЅС‹Рµ.  
+РџСЂРёР»РѕР¶РµРЅРёРµ Р·Р°РїСѓСЃРєР°РµС‚СЃСЏ Р»РѕРєР°Р»СЊРЅРѕ Рё РґРѕСЃС‚СѓРїРЅРѕ РІСЃРµРј СѓСЃС‚СЂРѕР№СЃС‚РІР°Рј РІ РІР°С€РµР№ Р»РѕРєР°Р»СЊРЅРѕР№ СЃРµС‚Рё.
+
+## РўРµС…РЅРѕР»РѕРіРёС‡РµСЃРєРёР№ СЃС‚РµРє
+
 ![.NET](https://img.shields.io/badge/.NET-5C2D91?style=for-the-badge&logo=.net&logoColor=white)
 ![C#](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=c-sharp&logoColor=white)
 ![Entity Framework](https://img.shields.io/badge/Entity%20Framework-007ACC?style=for-the-badge&logo=entity-framework&logoColor=white)
-<br>
 ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
-<br>
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 
-## Запуск и отладка приложения
+## РЈСЃС‚Р°РЅРѕРІРєР° Рё Р·Р°РїСѓСЃРє
 
-1) Для работы приложения нужно скачать 
-- .NET 8 Runtime или SDK ([скачать](https://dotnet.microsoft.com/download/dotnet/8.0))
+1. **РЈСЃС‚Р°РЅРѕРІРёС‚Рµ .NET 8 Runtime РёР»Рё SDK**  
+   в†’ [РЎРєР°С‡Р°С‚СЊ .NET 8](https://dotnet.microsoft.com/download/dotnet/8.0)
 
-2) Клонирование репозитория <br>
-```git clone https://github.com/Ob-Server-1/FlickLog_Pet.git```
-
-## Запуск в лкоальной сети
-При компиляции и запуске приложение будет запущено на локальной порте :7047
-и с вашим ip.
-
-1) Как посмотреть свой ip <br>
-Зайдите в cmd (командная строка) и напишите команду ```ipconfig``` Там и будет ваш ip
-2) Затем при подключение с другого устройства просто введите адрес в браузере согласно шаблону
-Шаблон - 
-```http://[Ваш ip адрес]:7047```
-И вот и всё, все успешно заработает !!!
+2. **РљР»РѕРЅРёСЂСѓР№С‚Рµ СЂРµРїРѕР·РёС‚РѕСЂРёР№**
+   ```bash
+   git clone https://github.com/Ob-Server-1/FlickLog_Pet.git
