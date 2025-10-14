@@ -34,6 +34,7 @@
             <h2 class="LeftMenu-title">Статус</h2>
             <!-- ✅ Убраны дубли id, исправлено data-filter -->
             <div class="statuc-buttons">
+                <button class="statuc-btn" data-filter="">Всё</button>
                 <button class="statuc-btn" data-filter="pr">Просмотренно</button>
                 <button class="statuc-btn" data-filter="sm">Смотрю</button>
                 <button class="statuc-btn" data-filter="zb">Заброшено</button>
@@ -47,93 +48,36 @@
         </div>
     </div>
 
-    <!-- ✅ Исправлен путь: // → / -->
+    <!--Фронтовый тип добавления карточек-->
+    <!-- AllGet метод, для проявления вообще всех карточек-->
+    <script>
+        (async () => {
+            try {
+                const response = await fetch("/reg/cheak");
+                if (response.status === 401) {
+                    let con = confirm("Вы регистрировались раньше ?");
+                    if (!con) {
+                        window.location.href = "/register.html";
+                    }
+                    else {
+                        window.location.href = "/vhod.html";
+                    }
+                }
+            }
+            catch (error) {
+                console.error("Произошла ошибка:", error);
+                alert("Произошла ошибка, срочно несите печеньки администратору");
+            }
+        })();
+    </script>
+
+
+
     <script src="ScripsJs/CardScript.js"></script>
     <script src="ScripsJs/StandsrtPage.js"></script>
+    <!--Get метод со всеми фильтрами-->
+    <script src="ScripsJs/GetCardFilter.js"></script>
 
-    <script>
-        // ✅ Обработчик: сортировка по дате
-        document.getElementById("FilterDate").addEventListener("click", function () {
-            const isActive = this.classList.toggle("active");
-            this.dataset.active = isActive;
-        });
 
-        // ✅ Переместил обработчики кнопок статуса ВНЕ обработчика "Поиск"
-        const statucButtons = document.querySelectorAll(".statuc-btn");
-        statucButtons.forEach(button => {
-            button.addEventListener("click", function () {
-                statucButtons.forEach(btn => {
-                    btn.classList.remove("active");
-                    btn.dataset.active = "false";
-                });
-                this.classList.add("active");
-                this.dataset.active = "true";
-            });
-        });
-
-        // ✅ Обработчик: поиск
-        document.getElementById("search").addEventListener("click", async () => {
-            const search = document.getElementById("searchText").value;
-
-            const params = new URLSearchParams();
-
-            // ✅ Исправлен селектор: .statuc-btn.active
-            const activeBtn = document.querySelector(".statuc-btn.active");
-            const filter = activeBtn?.dataset.filter || ""; // ✅ data-filter, не data-statuc
-
-            if (filter) {
-                params.append("sortStatuc", filter);
-            }
-
-            if (search) {
-                params.append("search", search);
-            }
-
-            const filterBtn = document.getElementById("FilterDate");
-            if (filterBtn?.dataset.active === "true") {
-                params.append("sortData", "desc");
-            }
-
-            const url = `/api/data/GetCard?${params}`;
-
-            try {
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
-                }
-
-                const result = await response.json();
-                const container = document.getElementById("cards-container");
-                if (!container) {
-                    console.warn("Контейнер с id 'cards-container' не найден");
-                    return;
-                }
-
-                container.innerHTML = ''; // Очищаем
-
-                const arrCards = result.data;
-                if (!Array.isArray(arrCards)) {
-                    console.warn("Ожидался массив, но получен:", arrCards);
-                    return;
-                }
-
-                for (let item of arrCards) {
-                    const card = document.createElement("div");
-                    card.className = "card";
-                    card.innerHTML = `
-                            <strong>${item.nameFilm}</strong>
-                            <p>${item.link}</p>
-                            <p>Серия: ${item.serNumber}</p>
-                            <p>Дата следующей серии: ${item.dateTime}</p>
-                            <p>Статус: ${item.statuc}</p>
-                        `;
-                    container.appendChild(card);
-                }
-            } catch (error) {
-                console.error("Ошибка при запросе:", error);
-                alert("Не удалось загрузить данные: " + error.message);
-            }
-        });
-    </script>
 </body>
 </html>

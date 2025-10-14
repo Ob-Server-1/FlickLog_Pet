@@ -25,6 +25,7 @@ public class DataController : ControllerBase //ДАнный контроллер
     [HttpPost("Add")]
     public async Task<IActionResult> AddData([FromBody] Data_Add request)
     {
+        Console.WriteLine("Задействуеться контроллер  POST AddData!");
         string? requestCookies = Request.Cookies["Token"]; // Отлавливаем куки с ответом
         if (string.IsNullOrEmpty(requestCookies))
         {
@@ -37,18 +38,18 @@ public class DataController : ControllerBase //ДАнный контроллер
             var userId = User.FindFirst("Id")?.Value;
             var userName = User.FindFirst("Name")?.Value;
 
-            DataModel1 dataModel = new DataModel1
+			DataModel1 dataModel = new DataModel1
             {
                 NameFilm = request.NameFilm,
                 Link = request.Link,
-                DateTime = DateTime.Now.ToString(),
+                DateTime = request.DateTime,
                 SerNumber = request.SerNumber,
-                Statuc = request.Statuc,
+				Statuc = request.Statuc,
                 UserId = userId
             };
             await _context.DataModel.AddAsync(dataModel);
             await _context.SaveChangesAsync();
-            return Ok($"Ваши данные успешно получены");
+            return Ok(dataModel);
         }
         catch (ArgumentException ex)
         {
@@ -82,7 +83,7 @@ public class DataController : ControllerBase //ДАнный контроллер
         {
             data = data.Where(x => x.Statuc ==request.sortStatuc);
         }
-
+        
 
         if (request.sortData == "desc")
         {
@@ -125,7 +126,15 @@ public class DataController : ControllerBase //ДАнный контроллер
         CheackIf.Statuc = request.Statuc;
 
         await _context.SaveChangesAsync();
-        return NoContent();
+        return Ok(new
+        {
+            id=idCard,
+            CheackIf.NameFilm,
+            CheackIf.Link,
+            CheackIf.SerNumber,
+            CheackIf.DateTime,
+            CheackIf.Statuc
+        });
     }
     [HttpDelete("DeleteCard/{idCard}")]
     public async Task<IActionResult> DeleteCard(int idCard)
@@ -138,7 +147,8 @@ public class DataController : ControllerBase //ДАнный контроллер
 
         _context.DataModel.Remove(CheackIf);
         await _context.SaveChangesAsync();
-        return Ok();
+        return Ok(new { 
+        message="Все норм карточка была удалена"});
     }
 }
 

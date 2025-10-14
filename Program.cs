@@ -1,4 +1,4 @@
-using FlickLog_Pet.Controllers;
+п»їusing FlickLog_Pet.Controllers;
 using FlickLog_Pet.DbAccets;
 using Microsoft.AspNetCore.CookiePolicy;
 
@@ -13,9 +13,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Logging.AddConsole();
-builder.Logging.SetMinimumLevel(LogLevel.Information); // или Debug
-
-builder.Services.AddScoped<IPasswordHeasher,PasswordHeasher>(); //Разобратся как работает DI
+builder.Logging.SetMinimumLevel(LogLevel.Information); // РёР»Рё \\
+                                                       //
+builder.WebHost.UseUrls("http://0.0.0.0:7047");
+builder.Services.AddScoped<IPasswordHeasher,PasswordHeasher>(); //Р Р°Р·РѕР±СЂР°С‚СЃСЏ РєР°Рє СЂР°Р±РѕС‚Р°РµС‚ DI
 builder.Services.AddScoped<JWT_TokenProvider>();
 
 builder.Services.AddControllers();
@@ -25,12 +26,13 @@ builder.Services.AddApiAuthentication(builder.Configuration);
 
 var app = builder.Build();
 
+
 app.UseCookiePolicy(new CookiePolicyOptions
 {
-    MinimumSameSitePolicy = SameSiteMode.None,
+    MinimumSameSitePolicy = SameSiteMode.Lax, // вњ… Р”Р»СЏ HTTP
     HttpOnly = HttpOnlyPolicy.Always,
-    Secure = CookieSecurePolicy.Always
-}); //Поликтки куки для безопасности
+    Secure = CookieSecurePolicy.SameAsRequest // вњ… Р•СЃР»Рё HTTP в†’ РєСѓРєР° Р±РµР· Secure
+});
 
 
 if (app.Environment.IsDevelopment())
@@ -42,7 +44,7 @@ if (app.Environment.IsDevelopment())
 app.UseStaticFiles();
 app.UseRouting();
 
-//app.MapFallbackToFile("index.html"); // Перехватывает все маршруты и возвращает index.html
+//app.MapFallbackToFile("index.html"); // РџРµСЂРµС…РІР°С‚С‹РІР°РµС‚ РІСЃРµ РјР°СЂС€СЂСѓС‚С‹ Рё РІРѕР·РІСЂР°С‰Р°РµС‚ index.html
 app.UseHttpsRedirection();
 
 app.UseAuthentication(); 
